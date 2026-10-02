@@ -1,0 +1,49 @@
+{
+  "checks": [
+    {
+      "name": "本地 TTS 服务在线",
+      "pass": true,
+      "detail": "Qwen3-TTS-12Hz-0.6B-CustomVoice-8bit / qwen3-tts-mlx"
+    },
+    {
+      "name": "页面（file://）真的能连通本地服务：CORS 通过",
+      "pass": true,
+      "detail": "1 次合成请求，1 次服务访问"
+    },
+    {
+      "name": "真的出声了（排进了播放时间轴）",
+      "pass": true,
+      "detail": {
+        "buffers": 4,
+        "sources": 4,
+        "started": 4,
+        "firstStartAt": 1917.8000001907349
+      }
+    },
+    {
+      "name": "走的是流式（建了多个 AudioBuffer）",
+      "pass": true,
+      "detail": "4 块 / 1 次流式请求"
+    },
+    {
+      "name": "没有 NotAllowedError 之类的播放拒绝",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "一次回复只合成一句",
+      "pass": true,
+      "detail": "1 次"
+    },
+    {
+      "name": "合成的是 AI 那句话本身",
+      "pass": true,
+      "detail": "他后悔了。"
+    }
+  ],
+  "errors": [],
+  "data": {
+    "roundTripMs": 3794,
+    "firstSoundMs": 1918
+  }
+}

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 伴读 · 需求文档</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --card:#fff; --ink:#1c1c1a; --ink2:#585652; --ink3:#8a8880;
+    --line:#e5e3dc; --line2:#d3d1c7;
+    --accent:#2f6f4f; --accent-bg:#eaf3ed;
+    --blue:#2b5f8f; --blue-bg:#eaf1f8;
+    --warn:#8a5a12; --warn-bg:#faf1e0;
+    --danger:#9c3330; --danger-bg:#fbeceb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:15px;line-height:1.78;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px;margin:0 auto;padding:56px 28px 100px;}
+  header{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:14px;}
+  h1{font-size:29px;margin:0 0 10px;font-weight:600;letter-spacing:-.01em;}
+  .sub{color:var(--ink2);font-size:14.5px;}
+  .meta{margin-top:12px;color:var(--ink3);font-size:13px;}
+  h2{font-size:19px;margin:52px 0 16px;font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--line2);}
+  h3{font-size:15.5px;margin:26px 0 8px;font-weight:600;}
+  h4{font-size:14px;margin:18px 0 6px;font-weight:600;color:var(--ink2);}
+  p{margin:0 0 13px;}
+  ul,ol{margin:8px 0 14px;padding-left:22px;}
+  li{margin-bottom:6px;}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13.5px;margin:10px 0 16px;}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{background:#f2f1ec;font-weight:600;font-size:13px;white-space:nowrap;}
+  tr:last-child td{border-bottom:none;}
+  td.n{white-space:nowrap;}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;background:#f0efe9;padding:1px 5px;border-radius:4px;color:#3d3b37;}
+  pre{background:#f2f1ec;border:1px solid var(--line);border-radius:8px;padding:14px 16px;overflow-x:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.6;color:#3d3b37;margin:10px 0 16px;}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:16px 0;}
+  .box.accent{border-left:3px solid var(--accent);}
+  .box.warn{border-left:3px solid var(--warn);background:var(--warn-bg);border-color:#eadfc6;}
+  .box.danger{border-left:3px solid var(--danger);background:var(--danger-bg);border-color:#edcfcd;}
+  .box p:last-child,.box ul:last-child,.box ol:last-child{margin-bottom:0;}
+  .tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:20px;font-weight:500;vertical-align:1px;}
+  .p0{background:var(--accent-bg);color:var(--accent);}
+  .p1{background:var(--blue-bg);color:var(--blue);}
+  .p2{background:#f0efe9;color:var(--ink3);}
+  .no{background:var(--danger-bg);color:var(--danger);}
+  .yes{color:var(--accent);font-weight:600;}
+  .nope{color:var(--danger);font-weight:600;}
+  .wire{background:#fbfbf9;border:1px solid var(--line2);border-radius:8px;padding:16px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;line-height:1.5;white-space:pre;overflow-x:auto;color:#4a4844;margin:12px 0 18px;}
+  kbd{display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#fff;border:1px solid var(--line2);border-bottom-width:2px;border-radius:5px;padding:1px 7px;color:#3d3b37;min-width:22px;text-align:center;}
+  blockquote{margin:12px 0;padding:2px 0 2px 16px;border-left:3px solid var(--line2);color:var(--ink2);font-size:14.5px;}
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 22px;margin:22px 0 0;font-size:14px;}
+  .toc ol{margin:6px 0 0;padding-left:20px;columns:2;column-gap:32px;}
+  .toc li{margin-bottom:3px;break-inside:avoid;}
+  footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line2);color:var(--ink3);font-size:12.5px;}
+  @media (max-width:640px){.wrap{padding:32px 16px 64px}h1{font-size:23px}.toc ol{columns:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>AI 伴读 · 需求文档</h1>
+  <div class="sub">一个纯前端、跑在 Chrome 里的中文电子书 AI 伴读工具</div>
+  <div class="meta">v1.3 ｜ 2026-09-28 ｜ 状态：已确认，按本文档实现</div>
+</header>
+
+<div class="box warn">
+  <p><strong>v1.3 相对 v1.2 的修订（试用后反馈）：</strong></p>
+  <ol>
+    <li><strong>讨论不设知识边界。</strong>原提示词把"只基于给出的原文回答、超范围必须说'这超出了我能看到的内容'"写成硬约束，导致问个作者原名都被拒答。改为：给出的原文是<strong>补充背景</strong>，AI 可以自由使用自己的知识，讨论允许发散。只在用户明确问"这一段/这本书里怎么写的"时才以原文为准。</li>
+    <li><strong>带修饰键的组合键一律不拦。</strong><kbd>Cmd</kbd>+<kbd>C</kbd> 曾被「<kbd>C</kbd> 长文」吃掉，且因为调了 <code>preventDefault</code>，连复制都失败。</li>
+    <li><strong>带修饰键的滚轮也不拦</strong>（<kbd>Cmd</kbd>+滚轮 / 触控板捏合是缩放）。</li>
+  </ol>
+</div>
+
+<div class="box warn">
+  <p><strong>v1.2 相对 v1.1 的修订（试用后反馈）：</strong></p>
+  <ol>
+    <li><strong>讨论抽屉里不再复制一份当前正文。</strong>原文就在左边、还在虚化上下文里，复制一份只是重复，还白占版面。</li>
+    <li><strong>讨论抽屉没有任何空态文案。</strong>不给"这一屏还没聊过"、不给提问示例。没聊过就是空白等输入，发出第一条后才显示对话记录。</li>
+    <li><strong>没有对象的操作收起。</strong>一条回复都还没有时，「重新生成回复」隐藏。</li>
+  </ol>
+</div>
+
+<div class="box warn">
+  <p><strong>v1.1 相对 v1.0 的修订（试用后反馈）：</strong></p>
+  <ol>
+    <li><strong>焦点模式不再隐藏前后文。</strong>原方案是"屏幕上只有当前这一屏"，实际读起来完全没有上下文。改为：当前屏清晰居中，前后各 12 屏照常渲染，按距当前屏的远近逐级模糊、逐级变淡，屏幕上下缘再淡出。</li>
+    <li><strong>翻页键改为方向键。</strong>上一屏 = <kbd>↑</kbd>（不再用 Shift+空格）；下一屏 = <kbd>空格</kbd> 或 <kbd>↓</kbd>。鼠标滚轮一次滑动走一屏。</li>
+    <li><strong>回车与 Tab 对调。</strong><kbd>回车</kbd> = 切换原文 / 润色版；<kbd>Tab</kbd> = 进入讨论。</li>
+  </ol>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">项目定位</a></li>
+    <li><a href="#s2">需求决策记录</a></li>
+    <li><a href="#s3">目标与非目标</a></li>
+    <li><a href="#s4">核心概念</a></li>
+    <li><a href="#s5">功能清单</a></li>
+    <li><a href="#s6">关键流程</a></li>
+    <li><a href="#s7">界面结构</a></li>
+    <li><a href="#s8">快捷键</a></li>
+    <li><a href="#s9">数据模型</a></li>
+    <li><a href="#s10">技术方案</a></li>
+    <li><a href="#s11">风险</a></li>
+    <li><a href="#s12">待你确认的问题</a></li>
+    <li><a href="#s13">实施计划</a></li>
+  </ol>
+</div>
+
+<h2 id="s1">1. 项目定位</h2>
+
+<p>你要解决的问题很具体：<strong>中文书读起来太费劲</strong>。两种情况——文字水平远高于你的书，生僻词和长句让你读得很慢；以及全是口水话的商业畅销书，读了半天没有信息量。两种情况的解法是相反的，但共同点是：<strong>你需要一个能按你的水平重新组织原文的中间层</strong>。</p>
+
+<p>市面上现有的工具（ReadAny、ReadAware、Marginalia 等）都只做到了「选中一段 → 让 AI 解释」，属于<strong>按需触发</strong>：你还是得先读懂原文，才知道哪一段需要改。这个工具反其道而行——<strong>把 AI 改写做成一等公民，让你可以整本书都以改写稿的形式读下去</strong>。</p>
+
+<div class="box accent">
+  <p><strong>一句话定位：</strong>把一本中文书，按你的节奏，一屏一屏地、用 AI 重写过的语言读下去；读到有意思的地方，随手进入与 AI 的讨论；聊完继续往下。</p>
+</div>
+
+<h2 id="s2">2. 需求决策记录</h2>
+
+<p>以下每一条都是本轮确认过的，后续实现以此为准。</p>
+
+<table>
+  <thead><tr><th>#</th><th>问题</th><th>你的决定</th></tr></thead>
+  <tbody>
+    <tr><td class="n">1</td><td>书与改写的语言方向</td><td>中文书，AI 改写后仍是中文（不做跨语言翻译）</td></tr>
+    <tr><td class="n">2</td><td>手上的书是什么形态</td><td>EPUB / MOBI / AZW3 / PDF 都有</td></tr>
+    <tr><td class="n">3</td><td>怎么"读"改写稿</td><td>焦点式：当前段清晰、前后按距离模糊；默认原文；快捷键切润色、快捷键进讨论</td></tr>
+    <tr><td class="n">4</td><td>「当前这一段」怎么确定</td><td><strong>一屏一段</strong>：当前段吸在正中，前后各渲染若干屏作为上下文，按距离逐级虚化</td></tr>
+    <tr><td class="n">5</td><td>「一段」的粒度</td><td>以自然段为准；<strong>超长自然段在句号处自动切成多个屏单元</strong></td></tr>
+    <tr><td class="n">6</td><td>润色切换的作用域</td><td><strong>持续模式</strong>：切一次就一直是润色版，直到切回原文</td></tr>
+    <tr><td class="n">7</td><td>讨论时 AI 的上下文</td><td>当前屏 + 前面若干屏（默认 10 屏，可调）；<strong>是补充背景，不是回答范围</strong>，讨论可以发散</td></tr>
+    <tr><td class="n">8</td><td>讨论区的形态</td><td><strong>右侧抽屉并排</strong>：原文在左，对话在右</td></tr>
+    <tr><td class="n">9</td><td>格式支持深度</td><td><strong>只做 EPUB</strong>；MOBI / AZW3 / PDF 由你用 Calibre 自己转</td></tr>
+    <tr><td class="n">10</td><td>下次打开的状态</td><td>书存在浏览器里，<strong>直接回到上次那一屏</strong></td></tr>
+    <tr><td class="n">11</td><td>快捷键风格</td><td><strong>空格 / ↓ 下一屏、↑ 上一屏、回车切润色、Tab 进讨论</strong></td></tr>
+    <tr><td class="n">12</td><td>附加能力取舍</td><td>只保留<strong>讨论留痕与标记</strong>；不做划词问 AI、不做高亮笔记、不做用量统计</td></tr>
+    <tr><td class="n">13</td><td>润色稿何时生成</td><td><strong>随读随备</strong>：只提前备好接下来若干屏（默认 5 屏）</td></tr>
+    <tr><td class="n">14</td><td>回看前文的方式</td><td><strong>一键切到连续长文</strong>视图，看完切回焦点模式</td></tr>
+  </tbody>
+</table>
+
+<h2 id="s3">3. 目标与非目标</h2>
+
+<h3>目标</h3>
+<ul>
+  <li><strong>零后端、零安装。</strong>双击 <code>main.html</code>，在 Chrome 里打开就能用。不启动服务、不装依赖、不注册账号。</li>
+  <li><strong>一屏一段的心流阅读。</strong>当前这一段清晰并停在视线正中，前后的篇幅都还在——只是虚化了。眼前始终是一本书，不是一段孤立的文字。</li>
+  <li><strong>润色稿可以一直读下去。</strong>一键切到润色版后，往后每一屏都是改写稿，不用逐屏确认。</li>
+  <li><strong>讨论随手可达。</strong>读到有意思的地方按一个键就能和 AI 聊，聊完接着往下读。</li>
+  <li><strong>关掉浏览器不丢东西。</strong>下次打开直接回到上次那一屏，进度、润色稿、讨论记录都在。</li>
+</ul>
+
+<h3>非目标（明确不做）</h3>
+<table>
+  <thead><tr><th>不做的</th><th>原因</th></tr></thead>
+  <tbody>
+    <tr><td>任何形式的后端服务、账号、云同步</td><td>你的明确要求；实测 DeepSeek 接口允许 <code>file://</code> 直连，无需中转</td></tr>
+    <tr><td>MOBI / AZW3 / PDF 解析</td><td>Kindle 格式浏览器端无现成解析库，PDF 分段不可靠；用 Calibre 转 EPUB 更划算</td></tr>
+    <tr><td>跨语言翻译（英译中等）</td><td>你的场景是中文书的中文重写</td></tr>
+    <tr><td>划词问 AI、高亮、笔记</td><td>会引入第二套交互，稀释焦点阅读的纯粹性</td></tr>
+    <tr><td>Token 用量与费用统计</td><td>你不需要</td></tr>
+    <tr><td>全书检索 / RAG</td><td>AI 额外获得的背景限定在「当前屏 + 前 10 屏」，token 完全可控；但它自己的知识不受此限</td></tr>
+    <tr><td>移动端 / 响应式适配</td><td>目标是桌面 Chrome 本地使用</td></tr>
+    <tr><td>多标签页 / 多窗口同步</td><td>单页应用，单窗口使用</td></tr>
+  </tbody>
+</table>
+
+<h2 id="s4">4. 核心概念</h2>
+
+<p>这几个词贯穿全文，先定义清楚。</p>
+
+<table>
+  <thead><tr><th>概念</th><th>定义</th></tr></thead>
+  <tbody>
+    <tr><td><strong>屏</strong>（屏单元 / unit）</td><td>阅读的最小单位。默认一个自然段算一屏；自然段超过阈值（默认 160 字）时，在句末标点处自动切成多屏，累积到接近阈值切一刀。一屏必然是一个完整的语义块。</td></tr>
+    <tr><td><strong>原文</strong></td><td>书里的原始文字。</td></tr>
+    <tr><td><strong>润色稿</strong></td><td>AI 按你的水平重写过的这一屏。<strong>信息量不增不减</strong>，只换说法：生僻词换常用词、长句拆短句、书面腔换口语。不是摘要，不是翻译，不是注释。</td></tr>
+    <tr><td><strong>焦点模式</strong></td><td>默认阅读视图。当前一屏吸在视线正中并保持清晰；前后各渲染若干屏（默认 12 屏）作为上下文，按距当前屏的远近逐级虚化、逐级变淡，屏外缘再淡出。正文不随鼠标滚动，一屏一屏走。</td></tr>
+    <tr><td><strong>长文模式</strong></td><td>临时切换的连续滚动视图，用于通读整章。整章连续排版，一键切回焦点模式。</td></tr>
+    <tr><td><strong>讨论</strong></td><td>以某一屏为锚点、和 AI 的对话。对话按屏独立存档，翻回该屏可以接着聊。</td></tr>
+    <tr><td><strong>阅读位</strong></td><td>你当前停在哪一屏（书 / 章 / 屏三级定位）。</td></tr>
+  </tbody>
+</table>
+
+<h2 id="s5">5. 功能清单</h2>
+
+<h3>P0 — 核心闭环，缺一不可</h3>
+<table>
+  <thead><tr><th>功能</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>导入 EPUB</td><td>选择或拖入 <code>.epub</code> 文件；解析出书名、作者、封面、目录、章节正文；切成屏单元。</td></tr>
+    <tr><td>书架</td><td>列出已导入的书（封面、书名、作者、进度百分比）；可打开、可删除。首次打开时就是一个"选一本书"的界面。</td></tr>
+    <tr><td>焦点阅读</td><td>当前一屏居中并清晰，前后各若干屏按距离逐级虚化当上下文；跨章连续，章题随上下文一起出现。字号行距舒适。</td></tr>
+    <tr><td>翻屏</td><td>下一屏 / 上一屏；跨章节自动衔接；到底/到顶有明确反馈。</td></tr>
+    <tr><td>润色稿生成</td><td>对当前屏调用 DeepSeek 生成改写稿，结果落库缓存，二次进入秒开。</td></tr>
+    <tr><td>润色模式切换</td><td>切换后持续生效：往后每一屏都优先显示润色稿；再切回则显示原文。</td></tr>
+    <tr><td>随读随备</td><td>进入润色模式后，后台自动为接下来的 5 屏预生成润色稿（串行，1 并发），保持缓冲。</td></tr>
+    <tr><td>讨论</td><td>右侧抽屉展开对话；AI 上下文 = 当前屏全文 + 前面 10 屏；流式输出。</td></tr>
+    <tr><td>讨论留痕</td><td>聊过的屏在进度条与目录上有标记；翻回该屏时自动载入当时的完整对话，可继续。</td></tr>
+    <tr><td>进度持久化</td><td>书、阅读位、润色稿、讨论记录全部存 IndexedDB；重开直接恢复。</td></tr>
+    <tr><td>目录跳转</td><td>侧栏目录，点章节名跳到该章第一屏。</td></tr>
+    <tr><td>设置</td><td>DeepSeek API Key、模型名、讨论上下文屏数（默认 10）、预生成缓冲屏数（默认 5）、字号、主题（浅色/米黄/夜间）。</td></tr>
+  </tbody>
+</table>
+
+<h3>P1 — 体验完善，第二阶段</h3>
+<table>
+  <thead><tr><th>功能</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>连续长文模式</td><td>一键切整章连续排版，可自由滚动、可选中文字；切回焦点模式时以最后停留的位置为准。</td></tr>
+    <tr><td>润色稿与原文对照</td><td>在长文模式或焦点模式下，单屏展开原文与润色稿并排对照。</td></tr>
+    <tr><td>生成失败重试</td><td>单屏生成失败时给出明确提示与"重试"入口，不静默失败。</td></tr>
+    <tr><td>数据导出 / 导入</td><td>把全部数据（书 + 进度 + 润色稿 + 讨论）导出成一个 JSON 文件，换浏览器或备份用。</td></tr>
+    <tr><td>快捷键帮助页</td><td>按 <kbd>?</kbd> 浮出快捷键清单。</td></tr>
+    <tr><td>朗读 AI 回复</td><td>讨论里 AI 的回复边生成边读出来，按句切分，不用等整段写完。默认用系统语音（零依赖、即时）；设置里可切到本地服务 <strong>Qwen3-TTS</strong>（MLX 跑 GPU，完全离线，9 个预设音色含中文女声/男声/方言）。走流式：第一个音频块 0.3～0.5 秒就回来，点发送后约半秒出声，不用等整句合成完。</td></tr>
+    <tr><td>章末小结</td><td>读完一章时，AI 给一段本章要点回顾（可选开关）。</td></tr>
+  </tbody>
+</table>
+
+<h3>P2 — 以后再说</h3>
+<ul>
+  <li>自定义改写强度（三档：轻度润色 / 标准白话 / 极简口语）</li>
+  <li>按书设置默认阅读模式（有的书永远读润色版）</li>
+  <li>讨论记录导出为 Markdown</li>
+  <li>阅读时长与习惯统计</li>
+</ul>
+
+<h2 id="s6">6. 关键流程</h2>
+
+<h3>6.1 首次打开</h3>
+<ol>
+  <li>打开 <code>main.html</code> → 检测到没有书 → 显示欢迎/选书界面。</li>
+  <li>显示一个大拖放区 + "选择 EPUB 文件"按钮，旁边一行小字说明：<em>目前只支持 EPUB。MOBI / AZW3 / PDF 建议先用 Calibre 转成 EPUB。</em></li>
+  <li>用户选文件 → 解析（带进度提示，大书可能要几秒）→ 用内容 SHA-256 生成书籍 ID。</li>
+  <li>如果这本书已经在书架里（同一 ID）→ 直接跳到它上次的阅读位，不重复导入。</li>
+  <li>否则入库，进入第一章第一屏。</li>
+</ol>
+
+<h3>6.2 阅读循环（核心）</h3>
+<pre>   ┌──────────────────────────────────────────────────────┐
+   │  焦点模式：当前这一屏清晰居中                        │
+   │  上下各若干屏仍在屏幕上，只是按距离虚化              │
+   │  默认显示【原文】                                    │
+   └──────────────────────────────────────────────────────┘
+        │                        │                    │
+ [空格]/[↓] │ 下一屏        [↑] │ 上一屏      [回车] │ 切润色版
+        ▼                        ▼                    ▼
+   ┌──────────────┐        ┌──────────────┐   ┌──────────────────────┐
+   │ 推进阅读位   │        │ 退回一屏     │   │ 当前屏换成【润色稿】 │
+   │ 重新居中     │        │ 重新居中     │   │ 此后每屏都显示润色稿 │
+   │ 触发预取     │        │              │   └──────────────────────┘
+   └──────────────┘        └──────────────┘              │
+                                                          ▼
+                                             ┌────────────────────────────┐
+                                             │ 后台静默补齐接下来 5 屏    │
+                                             │ 未就绪的屏显示"生成中…"    │
+                                             └────────────────────────────┘</pre>
+
+<h3>6.3 讨论循环</h3>
+<pre>[Tab]  → 右侧抽屉展开，载入该屏的历史对话（若有）
+       → 没有历史对话时抽屉里就是空白：不复制当前正文、不放任何引导文案
+       → 光标自动落到输入框
+       → 提问 → 流式返回
+       → 继续追问任意轮
+       → 该屏标记为"已讨论过"
+[Esc]  → 抽屉收起，回到焦点阅读，停留在同一屏
+[空格] → 抽屉收起并前进到下一屏（"讨论完接着读"）
+[Tab]  → 讨论中再按一次：放开输入框、抽屉不关，键盘交还给阅读</pre>
+
+<p>AI 在讨论中<strong>额外获得的背景</strong>（每次都完整给出，不做检索）：</p>
+<ul>
+  <li>书名、当前章名、当前是第几屏 / 本章共几屏</li>
+  <li><strong>当前屏的完整原文</strong>（即使当前显示的是润色稿，也给它原文）</li>
+  <li>当前屏<strong>所属自然段的全文</strong>（这一屏可能只是该自然段被切出来的一部分）</li>
+  <li><strong>前面 10 屏</strong>的原文（可调）</li>
+</ul>
+
+<div class="box warn">
+  <p><strong>这些内容是"补充背景"，不是"AI 的知识边界"。</strong>讨论是发散的，AI 必须能自由使用自己的知识回答人名、作者、年代、术语、历史背景、相关著作等——绝不能出现"这超出了我能看到的内容"这类回答。只有当用户在明确问"这一段 / 这本书里是怎么写的"时，才以上面给的原文为准；原文里确实没写，直说这一段里没有，之后照样可以给出它知道的。</p>
+  <p>唯一保留的约束是<strong>不许把编造的细节说成是原文里的</strong>：涉及本书具体情节、章节安排、版本差异这类容易记错的事，若来自模型自身知识，需用"据我所知"这类措辞。</p>
+</div>
+
+<h3>6.4 二次打开</h3>
+<ol>
+  <li>打开 <code>main.html</code> → 读 IndexedDB → 有上次的书 → <strong>直接恢复</strong>到上次的阅读位，包括当时是原文还是润色模式、字号主题等。</li>
+  <li>整个恢复过程不出现在中间界面，不要求任何点击。</li>
+  <li>左上角提供"书架"入口，可以换书或导入新书。</li>
+</ol>
+
+<h2 id="s7">7. 界面结构</h2>
+
+<h3>7.1 焦点阅读（默认视图）</h3>
+<div class="wire">┌──────────────────────────────────────────────────────────────────────┐
+│  《书名》  第三章 · 第 12/48 屏          [原文|润色]  ≡目录  ⚙设置  ☰书架 │
+├──────────────────────────────────────────────────────────────────────┤
+│  （虚）上一屏……                                                      │
+│  （虚）上上屏……                                                      │
+│                                                                      │
+│        他站在窗前，手里攥着那张已经揉皱的电报，半晌没有说话。   ←清晰 │
+│                                                                      │
+│  （虚）下一屏……                                                      │
+│  （虚）下下屏……                                                      │
+├──────────────────────────────────────────────────────────────────────┤
+│ ▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  25%   ·  已讨论 3 屏        │
+└──────────────────────────────────────────────────────────────────────┘
+   空格/↓ 下一屏   ↑ 上一屏   回车 润色版   Tab 讨论   C 长文   T 目录   ? 帮助</div>
+<p>「虚」不是隐藏，是<strong>按距离递减的模糊与透明度</strong>：紧邻的一屏只有轻微虚化，越远越糊、越淡，屏幕上下缘再淡出到背景里。跨章时章题也会作为上下文出现。当前屏始终被吸在视线正中。</p>
+
+<h3>7.2 讨论展开</h3>
+<div class="wire">┌───────────────────────────────────┬──────────────────────────────────┐
+│  《书名》 第三章 12/48      [原文] │  这一屏的讨论            ✕ 收起  │
+├───────────────────────────────────┼──────────────────────────────────┤
+│                                   │                                  │
+│                                   │                                  │
+│   他站在窗前，手里攥着那张已经     │                                  │
+│   揉皱的电报，半晌没有说话。       │  你：他为什么不直接说？          │
+│                                   │  AI：因为前面提到电报是……（流式）│
+│   楼下的梧桐叶落了一地，被风卷     │                                  │
+│   起来又落下。                     │  你：▌                           │
+│                                   │  ─────────────────────────────  │
+│                                   │  [ 继续读 → ]  [ 重新生成回复 ]  │
+└───────────────────────────────────┴──────────────────────────────────┘</div>
+<p>抽屉里<strong>不再复制一份当前正文</strong>——原文就在左边、还在虚化上下文里，复制一份只是重复，也白占版面。所以抽屉打开时<strong>没有任何空态文案</strong>：没聊过就是空白，等输入；发出第一条后才出现对话记录。</p>
+
+<h3>7.3 长文模式</h3>
+<p>整章连续排版，正常滚动，字号与焦点模式一致。顶部保留一个"回到焦点模式"的按钮，并在滚动时实时显示当前位置对应第几屏。点一段即选中，<strong>再点一下</strong>吸附回该屏的焦点阅读；在长文里按 <kbd>Tab</kbd> 可以直接讨论选中的那一段。</p>
+
+<h2 id="s8">8. 快捷键</h2>
+
+<p>翻屏用<strong>空格 / 方向键</strong>，切换与讨论分别落在<strong>回车 / Tab</strong>。所有快捷键在底部常驻提示，按 <kbd>?</kbd> 看完整清单。</p>
+
+<table>
+  <thead><tr><th>键</th><th>动作</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td><kbd>空格</kbd> / <kbd>↓</kbd></td><td>下一屏</td><td>讨论抽屉打开时，等价于"收起抽屉并前进"</td></tr>
+    <tr><td><kbd>↑</kbd></td><td>上一屏</td><td></td></tr>
+    <tr><td><kbd>回车</kbd></td><td>切换 原文 / 润色版</td><td>持续生效，不是只改当前屏</td></tr>
+    <tr><td><kbd>Tab</kbd></td><td>打开这一屏的讨论，聚焦输入框</td><td>再按一次放开输入框，抽屉不关</td></tr>
+    <tr><td><kbd>S</kbd></td><td>开 / 关朗读</td><td>正在读的时候按一下＝立刻打断当前这段</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>收起讨论 / 关闭弹窗 / 回书架</td><td></td></tr>
+    <tr><td><kbd>C</kbd></td><td>切换 焦点模式 / 长文模式</td><td>长文模式下同样按 <kbd>C</kbd> 切回</td></tr>
+    <tr><td><kbd>T</kbd></td><td>开合目录侧栏</td><td></td></tr>
+    <tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>上一章 / 下一章</td><td>跳到该章第一屏</td></tr>
+    <tr><td><kbd>?</kbd></td><td>快捷键帮助</td><td></td></tr>
+    <tr><td><kbd>Cmd</kbd>+<kbd>↵</kbd></td><td>发送讨论消息</td><td>焦点在输入框时回车直接发送；换行用 Shift+回车</td></tr>
+    <tr><td>鼠标滚轮</td><td>下一屏 / 上一屏</td><td>焦点模式不滚动正文，一次滑动正好走一屏</td></tr>
+  </tbody>
+</table>
+
+<div class="box warn">
+  <p><strong>带 <kbd>Cmd</kbd> / <kbd>Ctrl</kbd> / <kbd>Alt</kbd> 的组合键一律放行</strong>，页面不拦也不 <code>preventDefault</code>：<kbd>Cmd</kbd>+<kbd>C</kbd> 复制、<kbd>Cmd</kbd>+<kbd>R</kbd> 刷新、<kbd>Ctrl</kbd>+<kbd>A</kbd> 全选、<kbd>Cmd</kbd>+滚轮 / 触控板捏合缩放都要正常工作。原因是单字母快捷键（<kbd>C</kbd> 长文、<kbd>T</kbd> 目录）只看 <code>e.key</code> 就会被 <kbd>Cmd</kbd>+<kbd>C</kbd> 误命中，而且拦截后连复制本身都会失效。<kbd>Shift</kbd> 不在此列——<kbd>?</kbd> 本身依赖 Shift。</p>
+</div>
+
+<div class="box warn">
+  <p><strong>输入焦点保护：</strong>只要焦点在输入框内（讨论输入框、设置里的 Key 输入框等），所有单字母快捷键与空格一律不生效，正常输入。这是必须做对的细节——否则打字时按空格会翻屏。</p>
+</div>
+
+<h2 id="s9">9. 数据模型</h2>
+
+<p>全部数据存在 IndexedDB 的单一数据库里，按对象仓库分开。</p>
+
+<pre>books       { id, title, author, coverBlob, addedAt, lastOpenedAt,
+              chapters: [ { title, units: [ { id, text, srcParaIndex, kind } ] } ] }
+              id = SHA-256(文件字节)，用于去重
+              kind = 'whole'（整段就是一屏） | 'part'（超长段被切出来的一屏）
+
+progress    { bookId, chapterIndex, unitIndex, mode, updatedAt }
+              mode = 'original' | 'polished'  → 记住你要不要一直读润色版
+
+rewrites    { bookId, unitId, text, model, createdAt }
+              按屏缓存，命中即秒开
+
+chats       { bookId, unitId, messages: [ { role, content, at } ], updatedAt }
+              按屏存对话；存在即视为"已讨论"
+
+settings    { apiKey, model, baseUrl, contextUnits, prefetchUnits,
+              fontSize, theme, lineHeight, splitThreshold }</pre>
+
+<p><strong>身份与去重：</strong>同一本 EPUB 无论从哪个路径导入，内容哈希相同就视为同一本，不重复入库、且能正确接上原有进度。</p>
+
+<h2 id="s10">10. 技术方案</h2>
+
+<h3>10.1 为什么可以零后端</h3>
+<p>已实测确认（本机 Chrome，真实浏览器环境）：</p>
+<table>
+  <thead><tr><th>能力</th><th>结论</th></tr></thead>
+  <tbody>
+    <tr><td>DeepSeek 接口直连</td><td><span class="yes">可行</span>。对 <code>Origin: null</code> 返回 <code>access-control-allow-origin: null</code>，允许 <code>file://</code> 页面直接 POST</td></tr>
+    <tr><td>IndexedDB</td><td><span class="yes">可用</span>，配额约 <strong>3 GB</strong>（<code>navigator.storage.estimate()</code>）——书、润色稿、对话都放得下</td></tr>
+    <tr><td>localStorage</td><td><span class="yes">可用</span>，上限约 9.5 MB。只用来放小设置，不放书</td></tr>
+    <tr><td><code>crypto.subtle</code></td><td><span class="yes">可用</span>，用于算文件哈希</td></tr>
+    <tr><td>本地文件系统 API</td><td><span class="yes">可用</span>（<code>file://</code> 是安全上下文），P1 的导出功能可用</td></tr>
+  </tbody>
+</table>
+
+<h3>10.2 必须绕开的坑</h3>
+<div class="box danger">
+  <p><strong>不能用 ES Module。</strong> <code>&lt;script type="module"&gt;</code> 在 <code>file://</code> 下会被 CORS 直接拦掉。全部脚本必须用经典 <code>&lt;script src="..."&gt;</code> 引入，模块化靠 IIFE + 全局命名空间实现。</p>
+  <p><strong>不能 fetch 本地文件。</strong> 读磁盘文件只能走 <code>&lt;input type="file"&gt;</code> / 拖放 + <code>FileReader</code> / <code>arrayBuffer()</code>。</p>
+  <p><strong>不依赖 CDN。</strong> 外部依赖全部落到本地 <code>assets/vendor/</code>，保证断网也能完成导入与阅读（只有调 AI 时需要网络）。</p>
+  <p><strong>能从 <code>file://</code> 直连本机服务，但服务端必须带 CORS 头。</strong> 页面发出的请求 Origin 是字面量 <code>null</code>（不是"没有来源"），本地朗读服务的预检会因为没有 <code>Access-Control-Allow-Origin</code> 被浏览器拦掉。别以为是同在本机就免检——实测过，缺这个头就是 <code>Failed to fetch</code>。</p>
+</div>
+
+<h3>10.3 文件结构</h3>
+<pre>main.html                    入口，双击即用
+assets/
+  app.css                    全部样式，含浅色/米黄/夜间三套主题
+  store.js                   IndexedDB 封装（books/progress/rewrites/chats/settings）
+  books.js                   EPUB 解析 → 章节 → 屏单元切分
+  llm.js                     DeepSeek 客户端（流式 + 非流式、重试、超时）
+  tts.js                     朗读引擎：系统语音 / 本地服务（Qwen3-TTS），按句边流式生成、边收边读
+  prompts.js                 改写 / 讨论的系统提示词
+  ui.js                      视图渲染与状态机
+  app.js                     启动、事件绑定、快捷键、流程编排
+  vendor/jszip.min.js        EPUB 解压（已落到本地）
+
+tts-server/                  可选：把 AI 回复读得自然一点的本地服务（Qwen3-TTS，:8024）
+  setup-qwen3.sh             安装（建 venv + 从镜像下 0.6B-8bit 模型，避开 pip/HF 的几个坑）
+  start-qwen3.sh             起服务（离线模式，跑起来后后台预热）
+  serve-qwen3.py             包装 mlx-audio 的 Qwen3-TTS：流式 PCM 端点 + 整段 WAV 端点、启动预热
+  qwen3-model/               模型权重（整个目录随时可删，删了退回系统语音）
+  install-service.sh         装成开机自启的常驻服务（推荐，只有一个引擎）
+  uninstall-service.sh       卸载常驻服务</pre>
+
+<h3>10.4 DeepSeek 接口约定</h3>
+<p>对齐你 English 项目里已验证的用法，保持一致：</p>
+<table>
+  <thead><tr><th>项</th><th>值</th></tr></thead>
+  <tbody>
+    <tr><td>端点</td><td><code>https://api.deepseek.com/chat/completions</code></td></tr>
+    <tr><td>模型</td><td><code>deepseek-v4-flash</code>（可在设置里改）</td></tr>
+    <tr><td>鉴权</td><td><code>Authorization: Bearer &lt;API Key&gt;</code>，Key 存在本机 IndexedDB，不上传任何地方</td></tr>
+    <tr><td>思维链</td><td>请求体带 <code>thinking: { type: "disabled" }</code>。v4 模型默认开思维链，会把正文塞进 <code>reasoning_content</code>，导致解析取不到内容</td></tr>
+    <tr><td>重试</td><td>429 与 5xx 退避重试，最多 2 次；其余错误直接报错</td></tr>
+    <tr><td>超时</td><td>非流式 30 秒；流式按空闲超时判定</td></tr>
+    <tr><td>润色</td><td>非流式（后台批量跑，不需要展示过程）</td></tr>
+    <tr><td>讨论</td><td>流式 SSE，逐字输出</td></tr>
+  </tbody>
+</table>
+
+<h3>10.5 提示词要点</h3>
+<h4>润色（约束比技巧重要）</h4>
+<ul>
+  <li>保留原意与全部信息，<strong>不增不减</strong>；不添加原文没有的解释、评论、过渡句</li>
+  <li>生僻词换常用词，长句拆短句，书面腔换口语</li>
+  <li><strong>不输出任何前言、说明、引号或 Markdown 标记</strong>——直接给正文，否则会污染阅读界面</li>
+  <li>输入是「一屏」，输出长度应与原文同一量级（防止模型擅自扩写或缩成摘要）</li>
+</ul>
+
+<h4>讨论</h4>
+<ul>
+  <li>角色是博学、诚实、不奉承的阅读伙伴；<strong>禁止"很好的问题"这类客套</strong></li>
+  <li>严格基于给定上下文回答；<strong>超出范围必须明说，禁止编造</strong></li>
+  <li>中文、简洁；用户要求详细时再展开</li>
+  <li>附上书名、章名、阅读位置，让它知道你在哪儿读</li>
+</ul>
+
+<h2 id="s11">11. 风险</h2>
+
+<table>
+  <thead><tr><th>风险</th><th>影响</th><th>应对</th></tr></thead>
+  <tbody>
+    <tr><td>EPUB 排版千奇百怪</td><td>个别书的章节切分或段落切分不准</td><td>解析失败时给出明确提示并允许"按整章纯文本读"降级；不静默出错</td></tr>
+    <tr><td>超长段切分阈值定得不好</td><td>一屏太满或太碎，影响阅读节奏</td><td>阈值做成设置项（默认 160 字）；先用几本真实书验证</td></tr>
+    <tr><td>预生成撞到"生成中"</td><td>阅读节奏被打断</td><td>缓冲 5 屏 + 串行生成；撞到时显示明确状态而不是空白</td></tr>
+    <tr><td>润色稿质量不稳</td><td>出现删信息、加评论、变摘要</td><td>提示词里把"不增不减"写成硬约束；提供单屏"重新生成"</td></tr>
+    <tr><td>DeepSeek 接口报错或限流</td><td>润色与讨论不可用</td><td>退避重试；错误在对应位置就地显示，不影响阅读原文</td></tr>
+    <tr><td>书很大导致解析卡顿</td><td>导入时页面假死</td><td>解析放在 Web Worker 或分片处理，带进度提示</td></tr>
+  </tbody>
+</table>
+
+<h2 id="s12">12. 待你确认的问题</h2>
+
+<p>下面这些是我在写文档时自己拍的默认值，你没有明确说过。有异议的告诉我，没有的话我就按这个做。</p>
+
+<table>
+  <thead><tr><th>#</th><th>我默认的做法</th><th>想确认的点</th></tr></thead>
+  <tbody>
+    <tr><td class="n">1</td><td>超长段切分阈值 <strong>160 字</strong>，超过就按句号切</td><td>这个长度读一屏舒不舒服？宁可短一点（比如 120 字）还是长一点？</td></tr>
+    <tr><td class="n">2</td><td>预生成缓冲 <strong>5 屏</strong></td><td>够不够？翻得快的话 5 屏大约够缓冲 30 秒</td></tr>
+    <tr><td class="n">3</td><td>讨论上下文 <strong>前 10 屏</strong></td><td>够不够理解前因？</td></tr>
+    <tr><td class="n">4</td><td>焦点模式下，<strong>润色模式与原文模式各自记住翻到哪一屏</strong></td><td>还是共用一个阅读位更好？我倾向共用</td></tr>
+    <tr><td class="n">5</td><td>翻过一屏就算"读过"，不设显式的"标记已读"动作</td><td>需不需要手动标记？</td></tr>
+    <tr><td class="n">6</td><td>长文模式下<strong>同样显示当前的原文/润色模式</strong></td><td>还是长文模式固定显示原文？</td></tr>
+    <tr><td class="n">7</td><td>一章读完时<strong>不做任何打断</strong>，直接进下一章第一屏</td><td>要不要给个章末小结？（我列为 P1 可选）</td></tr>
+    <tr><td class="n">8</td><td>默认主题<strong>米黄</strong>，默认字号 19px，行距 1.9</td><td>有偏好吗？</td></tr>
+    <tr><td class="n">9</td><td>P1 里的功能<strong>先不做</strong>，等 P0 跑顺了再说</td><td>有没有哪个必须提前到 P0？</td></tr>
+  </tbody>
+</table>
+
+<h2 id="s13">13. 实施计划</h2>
+
+<table>
+  <thead><tr><th>阶段</th><th>内容</th><th>产出</th></tr></thead>
+  <tbody>
+    <tr><td><strong>一</strong></td><td>骨架与存储：<code>main.html</code>、样式系统、IndexedDB 封装、书架与导入流程</td><td>能导入 EPUB 并在书架上看到</td></tr>
+    <tr><td><strong>二</strong></td><td>解析：EPUB 解析、章节目录、屏单元切分</td><td>能按屏读起来（原文模式）</td></tr>
+    <tr><td><strong>三</strong></td><td>接入 DeepSeek：客户端、提示词、润色生成与缓存</td><td>能切到润色版并持续读下去</td></tr>
+    <tr><td><strong>四</strong></td><td>讨论：抽屉、流式对话、上下文组装、留痕与标记</td><td>核心闭环完成</td></tr>
+    <tr><td><strong>五</strong></td><td>体验打磨：预生成缓冲、长文模式、快捷键、主题、错误处理</td><td>可以日常用</td></tr>
+    <tr><td><strong>六</strong></td><td>端到端验证：无头 Chrome 实测导入真实 EPUB、三模式切换、模拟流式响应、刷新恢复</td><td>验证报告 + 截图</td></tr>
+  </tbody>
+</table>
+
+<div class="box accent">
+  <p><strong>下一步：</strong>你确认第 12 节的默认值和整体方向后，我从阶段一开始写代码。阶段一和阶段二做完会先给你看一次，确认解析和阅读手感没问题，再往上叠 AI 部分。</p>
+</div>
+
+<footer>
+  AI 伴读需求文档 v1.3 · 2026-09-28 · 本文档基于 14 轮确认整理；v1.1 修订焦点模式与快捷键，v1.2 精简讨论抽屉，v1.3 放开讨论的知识边界并修好组合键冲突，其余均以你的明确选择为准。
+</footer>
+
+</div>
+</body>
+</html>

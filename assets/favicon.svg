@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="AI 伴读">
+  <title>AI 伴读</title>
+  <!-- 纸页 -->
+  <rect x="10" y="6" width="44" height="52" rx="6" fill="#f6efe0" stroke="#3b3126" stroke-width="2.2"/>
+  <!-- 上下文：被虚化的前后屏 -->
+  <g fill="#3b3126" opacity=".26">
+    <rect x="17" y="19.2" width="24" height="4.5" rx="2.25"/>
+    <rect x="17" y="40.2" width="27" height="4.5" rx="2.25"/>
+  </g>
+  <!-- 当前这一屏 -->
+  <rect x="17" y="28.5" width="31" height="7" rx="3.5" fill="#3b3126"/>
+  <!-- AI -->
+  <path d="M45.5 10.1 Q46.35 14.65 50.9 15.5 Q46.35 16.35 45.5 20.9 Q44.65 16.35 40.1 15.5 Q44.65 14.65 45.5 10.1 Z"
+        fill="#2f6f4f"/>
+</svg>

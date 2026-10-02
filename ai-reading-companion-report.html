@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 伴读开源项目选型报告</title>
+<link rel="icon" type="image/svg+xml" sizes="any" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<style>
+  :root{
+    --bg:#f7f7f5; --card:#ffffff; --ink:#1c1c1a; --ink2:#5c5b57; --ink3:#8a8880;
+    --line:#e3e1da; --line2:#d3d1c7;
+    --accent:#2f6f4f; --accent-bg:#eaf3ed;
+    --warn:#8a5a12; --warn-bg:#faf1e0;
+    --danger:#9c3330; --danger-bg:#fbeceb;
+    --blue:#2b5f8f; --blue-bg:#eaf1f8;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:15px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:940px; margin:0 auto; padding:56px 28px 96px;}
+  header{border-bottom:2px solid var(--ink); padding-bottom:22px; margin-bottom:36px;}
+  h1{font-size:30px; line-height:1.3; margin:0 0 12px; font-weight:600; letter-spacing:-.01em;}
+  .sub{color:var(--ink2); font-size:14px;}
+  .meta{margin-top:14px; color:var(--ink3); font-size:13px;}
+  h2{font-size:20px; margin:56px 0 18px; font-weight:600; padding-bottom:8px; border-bottom:1px solid var(--line2);}
+  h3{font-size:16px; margin:0 0 6px; font-weight:600;}
+  p{margin:0 0 14px;}
+  .lead{font-size:16px; color:var(--ink2);}
+  .tldr{background:var(--card); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:8px; padding:20px 24px; margin:0 0 28px;}
+  .tldr p:last-child{margin-bottom:0}
+  .pick{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:22px 0 8px;}
+  .pick .c{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px;}
+  .pick .c.best{border:2px solid var(--accent);}
+  .tag{display:inline-block; font-size:12px; padding:2px 9px; border-radius:20px; background:var(--accent-bg); color:var(--accent); margin-bottom:10px; font-weight:500;}
+  .tag.b{background:var(--blue-bg); color:var(--blue);}
+  .tag.w{background:var(--warn-bg); color:var(--warn);}
+  .pick .c p{font-size:13.5px; color:var(--ink2); margin:8px 0 0;}
+  .pick .nm{font-size:15px; font-weight:600;}
+  table{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; font-size:13.5px; margin:8px 0 10px;}
+  th,td{padding:10px 12px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{background:#f2f1ec; font-weight:600; font-size:13px; white-space:nowrap;}
+  tr:last-child td{border-bottom:none;}
+  td.n{white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .y{color:var(--accent); font-weight:600;}
+  .m{color:var(--warn); font-weight:600;}
+  .x{color:var(--danger); font-weight:600;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:20px 22px; margin:16px 0;}
+  .card .top{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 12px; margin-bottom:4px;}
+  .card .repo{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; color:var(--ink3);}
+  .stats{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 14px;}
+  .st{font-size:12px; padding:3px 9px; border-radius:6px; background:#f2f1ec; color:var(--ink2); white-space:nowrap;}
+  .st b{font-weight:600; color:var(--ink);}
+  .card ul{margin:8px 0 0; padding-left:18px;}
+  .card li{margin-bottom:5px; font-size:14px; color:var(--ink2);}
+  .card li b{color:var(--ink); font-weight:600;}
+  .verdict{margin-top:14px; padding-top:12px; border-top:1px dashed var(--line2); font-size:13.5px;}
+  .verdict b{color:var(--accent);}
+  .bar{height:5px; background:#eeede8; border-radius:3px; overflow:hidden; margin-top:6px;}
+  .bar i{display:block; height:100%; background:var(--accent);}
+  .note{background:var(--warn-bg); border:1px solid #eadfc6; border-radius:8px; padding:16px 20px; margin:18px 0; font-size:14px;}
+  .note b{color:var(--warn);}
+  .gap{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:18px 22px; margin:14px 0;}
+  .gap h3{margin-bottom:8px;}
+  .gap .bad{color:var(--danger); font-weight:600;}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line2); color:var(--ink3); font-size:12.5px;}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; background:#f2f1ec; padding:1px 5px; border-radius:4px; color:var(--ink2);}
+  a{color:var(--blue); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  @media (max-width:640px){
+    .wrap{padding:32px 16px 64px}
+    h1{font-size:23px}
+    table{font-size:12.5px}
+    th,td{padding:8px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>AI 伴读开源项目选型报告</h1>
+  <div class="sub">面向「导入电子书 → AI 改写助读 → 分段讨论 → 继续下一段」这一阅读工作流</div>
+  <div class="meta">数据来源：GitHub REST API 实测抓取 ｜ 截止 2026-09-27</div>
+</header>
+
+<div class="tldr">
+  <p><b>一句话结论：</b>有，而且不少，但<b>没有一个项目把你说的两件事同时做到位</b>。</p>
+  <p>「选中一段 → 让 AI 解释/简化/改写 → 侧栏追问」这条链，已有多个项目做得很成熟；但「<b>让 AI 把整本书一段一段预先润色好，然后你直接读改写稿</b>」这件事，市面上基本没人做成一等公民功能——都是要你手动选中才触发。这个缺口对你的场景反而是机会。</p>
+  <p>如果你只是想找个能用的：<b>ReadAny</b>（最成熟）或 <b>ReadAware</b>（体验最好、最接近「伴读」）。如果你想要的就是你描述的那套流程：先看 <b>聊书</b>，但要接受它是个人新项目。</p>
+</div>
+
+<h2>① 按你的场景选</h2>
+
+<div class="pick">
+  <div class="c best">
+    <span class="tag">综合首选</span>
+    <div class="nm">ReadAny</div>
+    <div class="stats"><span class="st"><b>2,669</b> ★</span><span class="st">Tauri + React Native</span><span class="st">3 天前更新</span></div>
+    <p>功能最全、最活跃、跨平台。8+ 格式、RAG 全书问答、双语对照、TTS、笔记、WebDAV 同步全都有。想「装了就干活」选它。</p>
+  </div>
+  <div class="c">
+    <span class="tag b">体验最好</span>
+    <div class="nm">ReadAware</div>
+    <div class="stats"><span class="st"><b>392</b> ★</span><span class="st">Tauri 2 + React 19</span><span class="st">昨天更新</span></div>
+    <p>「逐句阅读」+ 会记事的 Agent + 插件系统。设计上真的是把 AI 当陪伴者而不是侧栏外挂，最贴合「伴读」这个词。</p>
+  </div>
+  <div class="c">
+    <span class="tag w">最贴你的描述</span>
+    <div class="nm">聊书 liaoshu</div>
+    <div class="stats"><span class="st"><b>0</b> ★</span><span class="st">React + PWA/安卓</span><span class="st">13 天前建库</span></div>
+    <p>「带读 / 讨论 / 费曼复述」三模式 + 每本书一份学习档案，几乎是你需求的原样翻译。但没有任何社区验证，属于自己趟雷。</p>
+  </div>
+</div>
+
+<h2>② 需求匹配矩阵</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>项目</th>
+      <th>导入电子书</th>
+      <th>AI 改写 / 简化原文</th>
+      <th>分段讨论入口</th>
+      <th>讨论完接着读</th>
+      <th>成熟度</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>ReadAny</b></td>
+      <td class="y">✓ 8+ 格式</td>
+      <td class="m">△ 按需翻译/解释</td>
+      <td class="y">✓ 全书 RAG 对话</td>
+      <td class="y">✓ 进度持久化</td>
+      <td class="y">很成熟</td>
+    </tr>
+    <tr>
+      <td><b>ReadAware</b></td>
+      <td class="y">✓ 9 种格式</td>
+      <td class="m">△ 段落问答式</td>
+      <td class="y">✓ 按句/段提问</td>
+      <td class="y">✓ 逐句推进</td>
+      <td class="y">成熟且在快跑</td>
+    </tr>
+    <tr>
+      <td><b>聊书</b></td>
+      <td class="y">✓ 5 种格式</td>
+      <td class="y">✓ 逐页解读/带读</td>
+      <td class="y">✓ 独立讨论模式</td>
+      <td class="y">✓ 三模式可切换</td>
+      <td class="x">未验证</td>
+    </tr>
+    <tr>
+      <td><b>Marginalia</b></td>
+      <td class="y">✓ ePub/PDF</td>
+      <td class="y">✓ 选中即解释/摘要</td>
+      <td class="y">✓ 浮动工具条</td>
+      <td class="y">✓ 侧栏不打断</td>
+      <td class="m">新，5★</td>
+    </tr>
+    <tr>
+      <td><b>reader-source</b></td>
+      <td class="m">△ PDF/EPUB/TXT</td>
+      <td class="y">✓ 原地重写难句</td>
+      <td class="y">✓ 四级上下文</td>
+      <td class="y">✓</td>
+      <td class="m">需自建后端</td>
+    </tr>
+    <tr>
+      <td><b>ReadBridge</b></td>
+      <td class="m">△ 纯文本为主</td>
+      <td class="y">✓ 逐句讲解</td>
+      <td class="y">✓ 逐句问答</td>
+      <td class="y">✓ 逐句推进</td>
+      <td class="y">337★，活跃</td>
+    </tr>
+    <tr>
+      <td><b>reader3</b>（karpathy）</td>
+      <td class="m">△ 仅 EPUB</td>
+      <td class="x">✗ 无内置</td>
+      <td class="x">△ 靠手动复制粘贴</td>
+      <td class="m">△ 章节制</td>
+      <td class="m">已停更，无 license</td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:13px;color:var(--ink3)">✓ 原生支持　△ 部分支持 / 需手动绕　✗ 不支持</p>
+
+<h2>③ 重点候选详解</h2>
+
+<div class="card">
+  <div class="top">
+    <h3>ReadAny</h3>
+    <span class="tag">综合首选</span>
+  </div>
+  <div class="repo">github.com/codedogQBY/ReadAny</div>
+  <div class="stats">
+    <span class="st"><b>2,669</b> ★</span><span class="st"><b>211</b> fork</span>
+    <span class="st">TypeScript</span><span class="st">Tauri + Expo</span>
+    <span class="st">最后提交 2026-09-26</span><span class="st">GPL-3.0（仓库标 Other）</span>
+  </div>
+  <ul>
+    <li><b>导入：</b>声称支持 8+ 格式，本地优先（SQLite + 本地向量库），书不进云。</li>
+    <li><b>改写：</b>没有「整本预改写」；提供即时翻译 + 解释 + 语义检索，选中段落让 AI 处理。</li>
+    <li><b>讨论：</b>RAG 全书问答，可问主题、脉络、翻译，不局限当前段。</li>
+    <li><b>模型：</b>OpenAI / Claude / Gemini / Ollama（本地）/ DeepSeek，自带 key。</li>
+    <li><b>周边：</b>5 色高亮、Markdown 笔记导出到 Obsidian、Edge TTS 朗读、WebDAV/S3/局域网同步、阅读统计热力图。</li>
+  </ul>
+  <div class="verdict"><b>选它的理由：</b>功能密度和活跃度都是这个领域第一梯队，跨平台（桌面 + 移动），装上就能用。<br><b>要注意：</b>355 个未关 issue，仓库 license 字段标的是 "Other"（官网写 GPL-3.0）——想拿它的代码做二次开发，先把这个搞清楚。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <h3>ReadAware</h3>
+    <span class="tag b">最接近「伴读」</span>
+  </div>
+  <div class="repo">github.com/ahpxex/read-aware</div>
+  <div class="stats">
+    <span class="st"><b>392</b> ★</span><span class="st"><b>34</b> fork</span>
+    <span class="st">TypeScript</span><span class="st">Tauri 2 + React 19</span>
+    <span class="st">最后提交 2026-09-27</span><span class="st">AGPL-3.0</span>
+  </div>
+  <ul>
+    <li><b>导入：</b>EPUB / MOBI / AZW3 / FB2 / PDF / TXT / HTML / CBZ / CBR 共 9 种，统一阅读模型，不用转格式。</li>
+    <li><b>阅读范式：</b>「<b>逐句阅读</b>」——一屏只推一句，天然适配你说的「读一段、停下来想一想」。</li>
+    <li><b>改写：</b>不是自动铺开，而是在页面上选段落 → 直接问 AI「这段在说什么 / 换成人话」，回答进侧栏，不离开书。</li>
+    <li><b>讨论：</b>一个带工具调用和长期记忆的 Agent，跨书积累你读过什么、标注过什么，不是无状态问答机器人。</li>
+    <li><b>扩展：</b>沙箱插件市场——朗读音色、主题、词典、RSS 源、新的 Agent 工具都能装。</li>
+    <li><b>同步：</b>端到端加密，走官方 relay 或你自己的 WebDAV。</li>
+  </ul>
+  <div class="verdict"><b>选它的理由：</b>这个项目的产品哲学就是「AI 待在阅读旁边，而不是接管阅读」，跟你的诉求最同频；跨 macOS / Windows / Linux / Android / iOS。<br><b>要注意：</b><b>AGPL-3.0</b>——如果你打算把它的代码揉进自己的商业项目，AGPL 的网络分发条款会咬人，只能当参考实现读，别直接抄。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <h3>聊书 · AI 带读电子书</h3>
+    <span class="tag w">最贴你的描述，但没人验证过</span>
+  </div>
+  <div class="repo">github.com/timno1988-hub/liaoshu-ai-reader</div>
+  <div class="stats">
+    <span class="st"><b>0</b> ★</span><span class="st">JavaScript</span>
+    <span class="st">React + Vite + Capacitor</span><span class="st">建库 2026-09-15</span><span class="st">MIT</span>
+  </div>
+  <ul>
+    <li><b>三种 AI 模式：</b>带读（逐页总结、解读、点出术语与论证结构）／讨论（统领全书的教练，基于全书检索，不做逐页重复）／费曼（让你复述，AI 打分并针对薄弱点重练）。</li>
+    <li><b>学习档案：</b>每本书维护一份读者画像（目标 / 已掌握 / 薄弱点 / 费曼卡点），三个模式共享。</li>
+    <li><b>导入：</b>EPUB / PDF / TXT / MOBI / AZW3；按屏精确分页、横向滑动翻页、朗读逐句高亮。</li>
+    <li><b>部署：</b>同一套代码出 Web/PWA 和安卓 APK；数据全在本地 IndexedDB。</li>
+    <li><b>模型：</b>自带任意 OpenAI 兼容 key（内置 DeepSeek 预设），key 只存本机。</li>
+  </ul>
+  <div class="verdict"><b>为什么值得看：</b>它把你说的「读原文 / 让 AI 重讲一遍 / 随时切进讨论 / 讨论完继续」直接做成了三个可切换的模式，还配了学习档案——这正是你在描述的工作流。<br><b>为什么不能盲信：</b>0 star、0 fork、建库才十来天、单人项目。代码可以当参考，别指望长期维护。<b>好在是 MIT</b>，思路可以直接拿来用。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <h3>Marginalia</h3>
+    <span class="tag b">「选中即改写」做得最顺</span>
+  </div>
+  <div class="repo">github.com/EurFelux/marginalia</div>
+  <div class="stats">
+    <span class="st"><b>5</b> ★</span><span class="st">桌面端</span>
+    <span class="st">最后提交 2026-09-24</span><span class="st">GPL-3.0</span>
+  </div>
+  <ul>
+    <li><b>核心交互：</b>在 ePub 或带文本层的 PDF 里选中一段，浮动工具条立刻给出 <b>解释 / 翻译 / 摘要</b> 三个一键动作，或直接自由提问；答案流式吐进侧栏，阅读不断。</li>
+    <li><b>透明的上下文：</b>每次提问带了哪些上下文，会显示成可开关的「筹码」——你的选区、所在段落、本章摘要、全书摘要，各自可勾可弃。<b>你永远知道 AI 看到了什么</b>，这点很少有项目做到。</li>
+    <li><b>陪伴感：</b>可以给助手起名、设人设和长期指令；有跨会话记忆，且每条记忆你都能看、能改、能删、能整体关掉；每本书的对话独立存档。</li>
+    <li><b>朗读：</b>按段落念，念到哪句高亮哪句并自动滚动，跨章节连续。</li>
+    <li><b>其他：</b>5 色高亮 + 便签 + 每本书一份 Markdown 笔记本；Apple Books 风格的封面墙书库；本地优先，BYOK，支持任意 OpenAI 兼容端点。</li>
+  </ul>
+  <div class="verdict"><b>选它的理由：</b>如果你最痛的是「文绉绉读不动」，它「选中 → 立刻给出白话版」的手感是这个列表里最好的。<br><b>要注意：</b>只有 5 颗星，非常新的单人项目；格式只有 ePub/PDF；macOS 未公证，首次打开要手动放行。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <h3>reader-source</h3>
+    <span class="tag">macOS 原生 + 原地改写</span>
+  </div>
+  <div class="repo">github.com/Marvy101/reader-source</div>
+  <div class="stats">
+    <span class="st"><b>57</b> ★</span><span class="st">Swift / SwiftUI</span>
+    <span class="st">最后提交 2026-09-20</span><span class="st">MIT</span>
+  </div>
+  <ul>
+    <li><b>唯一明确把「改写」写进功能的：</b>Inline understanding — 在页面内直接把难懂段落重写成更清晰的说法，不用离开书。</li>
+    <li><b>四级上下文提问：</b>针对选区 / 当前页 / 你读到的位置为止的全部内容 / 整本书。</li>
+    <li><b>本地优先：</b>书、进度、高亮、笔记、搜索、对话都能在无账号、无后端的情况下用；Supabase 同步和 AI 是可选叠加。</li>
+    <li><b>原生：</b>SwiftUI + PDFKit + WebKit，macOS 15+；架构上为将来铺 iOS/iPadOS 留了口子。</li>
+  </ul>
+  <div class="verdict"><b>选它的理由：</b>MIT 协议 + Swift 原生，如果你想自己动手改，这是最干净的底子之一。<br><b>要注意：</b><b>AI 功能必须自建 Supabase + Vercel 后端</b>，配置成本明显比其他几个高；且只有 macOS。</div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <h3>ReadBridge</h3>
+    <span class="tag">语言学习向，逐句讲解</span>
+  </div>
+  <div class="repo">github.com/WindChimeEcho/read-bridge</div>
+  <div class="stats">
+    <span class="st"><b>337</b> ★</span><span class="st"><b>42</b> fork</span>
+    <span class="st">TypeScript / Next.js</span><span class="st">最后提交 2026-09-18</span><span class="st">MIT</span>
+  </div>
+  <ul>
+    <li><b>逐句推进：</b>按句为单位读，一句一句过，天然形成「读一句 → 看 AI 讲解 → 下一句」的节奏。</li>
+    <li><b>n+1 可理解输入：</b>理论基石是 Krashen 的 i+1——每 100 词只有 1-2 个生词才叫有效输入；AI 用目标语言解释，不做翻译回母语。</li>
+    <li><b>难度可调：</b>按你自评的水平选/写 prompt 模板，AI 的讲解深度跟着变。</li>
+    <li>进度跨章节跨书保存，纯浏览器可用。</li>
+  </ul>
+  <div class="verdict"><b>选它的理由：</b>你自己就在做英语学习应用，这个项目把「用 AI 降低原文难度」这件事讲得最清楚，而且 MIT、活跃、有社区。它的 prompt 设计与难度分级思路可以直接借鉴。<br><b>要注意：</b>它不是通用电子书阅读器，偏学习工具，格式支持窄。</div>
+</div>
+
+<h2>④ 两个值得注意的空白</h2>
+
+<div class="gap">
+  <h3><span class="bad">空白一：</span>没有人把「整本预改写」做成一等公民</h3>
+  <p>你描述的「让 AI 把一段一段重新润色一遍给我读」，本质是<b>给同一本书生成第二条阅读线</b>——原文一层、改写稿一层，双栏或一键切换，离线可读、可缓存。</p>
+  <p>我翻遍上面这些项目，全都是「<b>选中才触发</b>」的按需模式。没有一个是导入时就整本跑一遍、把改写稿落库、阅读时无缝对照的。原因是成本与体验的权衡：整本改写 token 消耗大、等待久，而按需触发零浪费。</p>
+  <p>但对你说的场景（生僻书读得慢、口水书全是废话），按需触发其实不解决问题——你还是得先读懂才能判断哪段需要改写。<b>这个缺口是真实的。</b></p>
+</div>
+
+<div class="gap">
+  <h3><span class="bad">空白二：</span>工具只会「降难度」，不会「提稠密度」</h3>
+  <p>你抱怨的两类书，需求方向其实是<b>相反</b>的：</p>
+  <ul>
+    <li>文绉绉、生僻词多的 → 需要<b>降难度</b>：简化、白话化、拆句子。几乎所有工具都在做这个。</li>
+    <li>商业畅销书、全是口水话的 → 需要<b>提稠密度</b>：压缩掉铺垫和重复，只留论点、证据、结论，把 300 页压成 30 页的骨架。</li>
+  </ul>
+  <p>后者我没找到任何成熟实现。摘要功能是「章末给你一段总结」，不是「把正文本身的冗余挤掉、重写成紧凑版让你读」。<b>这可能是比第一个更有价值的切入点。</b></p>
+</div>
+
+<h2>⑤ 想二次开发的话，先看 License</h2>
+
+<table>
+  <thead>
+    <tr><th>项目</th><th>协议</th><th>能不能揉进你的产品</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><b>聊书 liaoshu</b></td><td class="y">MIT</td><td class="y">可以，随便用</td></tr>
+    <tr><td><b>reader-source</b></td><td class="y">MIT</td><td class="y">可以，随便用</td></tr>
+    <tr><td><b>ReadBridge</b></td><td class="y">MIT</td><td class="y">可以，随便用</td></tr>
+    <tr><td><b>LissajousX/aireader</b></td><td class="y">MIT</td><td class="y">可以（但已停更）</td></tr>
+    <tr><td><b>Marginalia</b></td><td class="x">GPL-3.0</td><td class="x">传染性强，闭源产品别碰</td></tr>
+    <tr><td><b>ReadAware</b></td><td class="x">AGPL-3.0</td><td class="x">更严格，网络服务也触发开源义务</td></tr>
+    <tr><td><b>ReadAny</b></td><td class="m">仓库标 Other</td><td class="m">官网自称 GPL-3.0，需先确认</td></tr>
+    <tr><td><b>reader3</b>（karpathy）</td><td class="x">无 license</td><td class="x">法律上默认保留所有权利，别抄</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <b>提醒：</b>顺带说一句，<code>karpathy/reader3</code> 虽然 3,873 星、是这一波「和 LLM 一起读书」的源头（他的三遍阅读法：先自己读 → 让 AI 解释总结 → 针对不懂处提问），但作者明确说不再维护、90% 代码是 vibe coding 产物，而且<b>仓库没有任何 license</b>。它值得当思路参考，不值得当技术底座。
+</div>
+
+<h2>⑥ 完整候选清单</h2>
+
+<table>
+  <thead>
+    <tr><th>项目</th><th>★</th><th>技术栈</th><th>协议</th><th>特点 / 适合谁</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>karpathy/reader3</td><td class="n">3,873</td><td>Python</td><td class="x">无</td><td>章节级复制粘贴给 LLM 的极简示范；已停更，思路源头</td></tr>
+    <tr><td>codedogQBY/ReadAny</td><td class="n">2,669</td><td>Tauri + RN</td><td class="m">Other</td><td>功能最全的通用选手</td></tr>
+    <tr><td>ahpxex/read-aware</td><td class="n">392</td><td>Tauri 2 + React</td><td class="x">AGPL-3.0</td><td>逐句阅读 + 有记忆的 Agent + 插件</td></tr>
+    <tr><td>WindChimeEcho/read-bridge</td><td class="n">337</td><td>Next.js</td><td class="y">MIT</td><td>逐句讲解、n+1 可理解输入，语言学习向</td></tr>
+    <tr><td>Marvy101/reader-source</td><td class="n">57</td><td>Swift / SwiftUI</td><td class="y">MIT</td><td>macOS 原生，页面内改写难句；需自建后端</td></tr>
+    <tr><td>LissajousX/aireader</td><td class="n">37</td><td>Tauri + llama.cpp</td><td class="y">MIT</td><td>100% 离线本地推理，选中→翻译→解释→存笔记；2026-02 后停更</td></tr>
+    <tr><td>EurFelux/marginalia</td><td class="n">5</td><td>桌面端</td><td class="x">GPL-3.0</td><td>选中即解释/翻译/摘要，上下文筹码透明</td></tr>
+    <tr><td>razaaliraza/ai-reader</td><td class="n">4</td><td>Python / FastAPI</td><td class="x">无</td><td>逐页摘要 + 章节对话，自托管容器，代码极简（两个文件）</td></tr>
+    <tr><td>Metatome/AnnaReader</td><td class="n">2</td><td>—</td><td>Apache-2.0</td><td>AI 双语逐段对照，集成 Anna's Archive，WebDAV 同步；2026-02 后停更</td></tr>
+    <tr><td>Parvm1102/Chronicle</td><td class="n">1</td><td>FastAPI + Qdrant</td><td class="x">无</td><td>小说向：角色识别 + 分角色 TTS + 无剧透角色对话；依赖重</td></tr>
+    <tr><td>timno1988-hub/liaoshu-ai-reader</td><td class="n">0</td><td>React + Capacitor</td><td class="y">MIT</td><td>带读/讨论/费曼三模式 + 学习档案，最贴本需求但未验证</td></tr>
+    <tr><td>vib795/reader4</td><td class="n">—</td><td>Python</td><td class="y">MIT</td><td>reader3 + 本地向量库 RAG（all-MiniLM-L6-v2），多模型可切</td></tr>
+    <tr><td>bbdd2729/TomoRead</td><td class="n">7</td><td>Flutter</td><td class="m">—</td><td>跨平台 Flutter 阅读器，标注 + AI 工作流</td></tr>
+    <tr><td>gh615280-maker/TextbookLens</td><td class="n">31</td><td>—</td><td class="m">—</td><td>Windows 教材阅读器，本地优先 + 可选 AI</td></tr>
+    <tr><td>luqiguan80-debug/BookFriend</td><td class="n">1</td><td>iOS/macOS</td><td class="m">—</td><td>本地阅读器 + 自带 AI 伴读（BYOB × BYOK）</td></tr>
+  </tbody>
+</table>
+
+<h2>⑦ 建议的下一步</h2>
+
+<p>三条路，按投入从小到大：</p>
+
+<ol style="padding-left:20px">
+  <li style="margin-bottom:10px"><b>今天就用起来：</b>下 ReadAny 或 ReadAware 的现成安装包，各读一章你手头最难受的那本书，试试「选中 → 让 AI 换人话 → 追问 → 继续读」顺不顺。半小时能判断出够不够用。</li>
+  <li style="margin-bottom:10px"><b>想要你描述的那套流程：</b>把 聊书（MIT，React）clone 下来跑一遍。它的「带读 / 讨论 / 费曼」三模式拆分，本身就是一份不错的产品设计参考——即使你最后不用它。</li>
+  <li><b>想自己做（我认为最值得）：</b>你在做英语学习应用，本来就熟悉 Next.js + Prisma + Postgres。真正没被占领的是上面那两个空白——<b>整本预改写 + 原文/改写稿双层阅读线</b>，以及<b>反向的「提稠密度」压缩读法</b>。现有的都是「选中才触发」，你把「导入即处理、双栏对照、离线可读」做出来，就是差异化。</li>
+</ol>
+
+<footer>
+  报告基于 GitHub 公开 API 于 2026-09-27 实测抓取，星数与提交时间会持续变化。功能描述来自各项目 README 与官网，未经实际安装验证——正式采用前请自行跑一遍。
+</footer>
+
+</div>
+</body>
+</html>

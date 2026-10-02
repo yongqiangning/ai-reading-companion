@@ -1,0 +1,724 @@
+{
+  "startedAt": "2026-10-02T22:16:36.318Z",
+  "checks": [
+    {
+      "name": "首屏为选书界面",
+      "pass": true,
+      "detail": "把一个 EPUB 拖进来，就可以开始读了。所有数据都留在你自己的浏览器里。"
+    },
+    {
+      "name": "导入并解析 EPUB",
+      "pass": true,
+      "detail": "紅樓夢 / 64 章 / 5704 屏 / 203ms"
+    },
+    {
+      "name": "解析出书名与作者",
+      "pass": true,
+      "detail": "紅樓夢 · Xueqin Cao"
+    },
+    {
+      "name": "抽到封面",
+      "pass": true,
+      "detail": "有"
+    },
+    {
+      "name": "章节标题非空",
+      "pass": true,
+      "detail": "[\"第一回　甄士隱夢幻識通靈　賈雨村風塵怀閨秀\",\"第二回　賈夫人仙逝揚州城　冷子興演說榮國府\",\"賈雨村夤緣复舊職　林黛玉拋父進京都\",\"薄命女偏逢薄命郎　葫蘆僧亂判葫蘆案\",\"第四回中既將薛家母子在榮府內寄居等事略已表明\"]"
+    },
+    {
+      "name": "章节标题是可读的章题而非兜底编号",
+      "pass": true,
+      "detail": "[\"第一回　甄士隱夢幻識通靈　賈雨村風塵怀閨秀\",\"第二回　賈夫人仙逝揚州城　冷子興演說榮國府\",\"賈雨村夤緣复舊職　林黛玉拋父進京都\"]"
+    },
+    {
+      "name": "存储后端为 IndexedDB",
+      "pass": true,
+      "detail": "idb"
+    },
+    {
+      "name": "↓ 进入下一屏",
+      "pass": true,
+      "detail": "當此，則自欲將已往所賴 天恩祖德，錦衣紈褲之時，飫甘饜肥之日，背父兄教育之恩，負"
+    },
+    {
+      "name": "↑ 退回上一屏",
+      "pass": true,
+      "detail": "此開卷第一回也．作者自云：因曾歷過一番夢幻之后，故將真事隱去"
+    },
+    {
+      "name": "↓ 再次进入下一屏",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "← 与 ↑ 等价，退回上一屏",
+      "pass": true,
+      "detail": "此開卷第一回也．作者自云：因曾歷過一番夢幻之后，故將真事隱去"
+    },
+    {
+      "name": "→ 与 ↓ 等价，进入下一屏",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "底部 HUD 同时标出 ↓/→ 与 ↑/←",
+      "pass": true,
+      "detail": "空格 朗读这一屏 ↓/→ 下一屏 ↑/← 上一屏 回车 润色版 Tab 讨论 S 回复朗读 C 长文 T 目录 ? 帮助 正在朗读这一屏"
+    },
+    {
+      "name": "顶栏显示章节与屏位",
+      "pass": true,
+      "detail": "第一回　甄士隱夢幻識通靈　賈雨村風塵怀閨秀 · 1/57 屏   ·   全书 1/5704"
+    },
+    {
+      "name": "空格不再翻屏",
+      "pass": true,
+      "detail": "0 → 0"
+    },
+    {
+      "name": "空格发起朗读并标出「正在朗读这一屏」",
+      "pass": true,
+      "detail": "reading=true hud=true"
+    },
+    {
+      "name": "空格读的正是当前屏显示的那段文字",
+      "pass": true,
+      "detail": "\"此開卷第一回也．作者自云：因曾歷過一番夢幻之后，\" vs \"此開卷第一回也．作者自云：因曾歷過一番夢幻之后，\""
+    },
+    {
+      "name": "朗读标记能撤掉",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "连续翻屏位置正确",
+      "pass": true,
+      "detail": "当前全局第 7 屏"
+    },
+    {
+      "name": "Cmd+C 不再被「C 长文」吃掉",
+      "pass": true,
+      "detail": "{\"longMode\":false,\"g\":6}"
+    },
+    {
+      "name": "Cmd+C 没有被 preventDefault（浏览器复制照常）",
+      "pass": true,
+      "detail": "{\"keys\":[\"Meta\",\"c\"],\"prevented\":[false,false],\"copyFired\":true}"
+    },
+    {
+      "name": "Cmd+T / Cmd+A 不触发目录、讨论、长文",
+      "pass": true,
+      "detail": "{\"tocOpen\":false,\"chatOpen\":false,\"longMode\":false}"
+    },
+    {
+      "name": "Cmd/Ctrl+滚轮不当翻页、也不拦截（交给浏览器缩放）",
+      "pass": true,
+      "detail": "{\"g0\":6,\"gAfterMod\":6,\"gAfterPlain\":7,\"modPrevented\":false,\"plainPrevented\":true}"
+    },
+    {
+      "name": "普通滚轮仍然一次滑动走一屏",
+      "pass": true,
+      "detail": "6 → 7"
+    },
+    {
+      "name": "? 打开快捷键帮助",
+      "pass": true,
+      "detail": "15 行键位"
+    },
+    {
+      "name": "帮助页键位与实现一致（空格、↓/→、↑/←、回车、Tab）",
+      "pass": true,
+      "detail": "[\"空格\",\"↓ / →\",\"↑ / ←\",\"回车\",\"Tab\",\"S\",\"Shift + 回车\",\"Esc\",\"C\",\"T\",\"[ / ]\",\"鼠标滚轮\",\"?\",\"Cmd/Ctrl + 回车\",\"Cmd/Ctrl/Alt + 任意键\"]"
+    },
+    {
+      "name": "帮助页写明空格＝朗读当前屏（而非下一屏）",
+      "pass": true,
+      "detail": "快捷键✕焦点模式下当前段居中、前后文按距离虚化，正文不会滚动；用键或滚轮一屏一屏走。正文可以直接划词复制，也可以点前后文里虚化的某一段跳过去。空格读的是你此刻看"
+    },
+    {
+      "name": "HUD 也同步写着「空格 朗读这一屏」",
+      "pass": true,
+      "detail": " 空格 朗读这一屏 ↓/→ 下一屏 ↑/← 上一屏 回车 润色版 Tab 讨论 S 回复朗读 C 长文 T 目录 ? 帮助 正在朗读这一屏 "
+    },
+    {
+      "name": "帮助页写明带修饰键的组合键交给浏览器",
+      "pass": true,
+      "detail": "Cmd/Ctrl/Alt + 任意键一律交给浏览器与系统（Cmd+C 复制、Cmd+R 刷新、Cmd"
+    },
+    {
+      "name": "当前段前后都渲染出上下文（不是隐藏）",
+      "pass": true,
+      "detail": "共 19 段，上 6 / 下 12，隐藏 0"
+    },
+    {
+      "name": "上下文里带出了章节标题",
+      "pass": true,
+      "detail": "1 个章题"
+    },
+    {
+      "name": "当前段不模糊",
+      "pass": true,
+      "detail": "none / opacity 1"
+    },
+    {
+      "name": "距当前段越远越模糊、越淡",
+      "pass": true,
+      "detail": "隔壁 2.4px/op0.6 · 隔三段 4.9px/op0.21"
+    },
+    {
+      "name": "当前段被吸在舞台正中",
+      "pass": true,
+      "detail": "偏离中心 0px（舞台高 804）"
+    },
+    {
+      "name": "焦点模式锁住正文滚动（一屏一段）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "点虚化的前后文可以跳到那一段",
+      "pass": true,
+      "detail": "第 6 屏"
+    },
+    {
+      "name": "跳回后位置正确",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "没配 Key 时按回车切润色版：原文仍可读 + 给出提示",
+      "pass": true,
+      "detail": "还没有配置 DeepSeek API Key，无法生成润色稿。原文照常可读。去设"
+    },
+    {
+      "name": "再按回车切回原文",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "设置面板保存 API Key",
+      "pass": true,
+      "detail": "sk-mock-for-e2e"
+    },
+    {
+      "name": "回车切到润色版并显示改写稿",
+      "pass": true,
+      "detail": "【POLISHED】那紅塵中有卻有些樂事，但不能永遠依恃，況又有`美中 不足，好事多魔'八個字緊相連"
+    },
+    {
+      "name": "润色模式按钮高亮",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "发送的请求关闭了思维链",
+      "pass": true,
+      "detail": "{\"type\":\"disabled\"}"
+    },
+    {
+      "name": "润色模式下可展开原文对照",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "后台预生成了当前+后续屏",
+      "pass": true,
+      "detail": "已就绪 6/6，缺 []"
+    },
+    {
+      "name": "已生成的屏走缓存，不再花 token",
+      "pass": true,
+      "detail": "请求数 7 → 7"
+    },
+    {
+      "name": "没配 Key 时不会去调 AI 判定（书里没有强度值，先用设置的兜底值）",
+      "pass": true,
+      "detail": "{\"eff\":5,\"def\":5,\"judgeCalls\":0}"
+    },
+    {
+      "name": "设置里新增润色强度控件：-10～10 的滑块，左减号右加号",
+      "pass": true,
+      "detail": "{\"min\":\"-10\",\"max\":\"10\",\"minus\":\"−\",\"plus\":\"＋\"}"
+    },
+    {
+      "name": "滑块旁显示当前数值与语义（+5 标准润色）",
+      "pass": true,
+      "detail": "5 / +5 / 标准润色"
+    },
+    {
+      "name": "强度含义有文字说明",
+      "pass": true,
+      "detail": "只处理真正费解的地方：生僻词、超长句、翻译腔，其余保持原样。"
+    },
+    {
+      "name": "设置里给了 AI 判定入口（还没有 AI 值时是「按 AI 判断」）",
+      "pass": true,
+      "detail": "这本书还没让 AI 判断过。按 AI 判断"
+    },
+    {
+      "name": "说明写明这是哪本书的强度",
+      "pass": true,
+      "detail": "只作用于《紅樓夢》。0＝不润色；正数越大越易读；负数越小说得越密（压掉废话）。改完会按新强度重新生成"
+    },
+    {
+      "name": "拖动滑块可以改数值（拖到最左端＝-10 极限压缩）",
+      "pass": true,
+      "detail": "{\"value\":\"-10\",\"num\":\"-10\",\"name\":\"极限压缩\"}"
+    },
+    {
+      "name": "右侧加号点一下 +1（-10 → -7）",
+      "pass": true,
+      "detail": "{\"value\":\"-7\",\"num\":\"-7\",\"name\":\"明显压缩\"}"
+    },
+    {
+      "name": "左侧减号点一下 -1（-7 → -9）",
+      "pass": true,
+      "detail": "{\"value\":\"-9\",\"num\":\"-9\",\"name\":\"极限压缩\"}"
+    },
+    {
+      "name": "按 AI 判断：得到这本书的强度并写进书里",
+      "pass": true,
+      "detail": "{\"v\":4,\"src\":\"ai\",\"note\":\"半文半白，长句多\"}"
+    },
+    {
+      "name": "判定结果同步到滑块",
+      "pass": true,
+      "detail": "4 / +4"
+    },
+    {
+      "name": "判定结果带理由显示在设置里",
+      "pass": true,
+      "detail": "AI 判断《紅樓夢》适合 +4（标准润色）：半文半白，长句多重新判断"
+    },
+    {
+      "name": "判定请求带上了书名与正文样本，并说明 -10～+10 的含义",
+      "pass": true,
+      "detail": "{\"model\":\"deepseek-v4-flash\",\"thinking\":{\"type\":\"disabled\"},\"maxTokens\":200,\"sysHasScale\":true,\"sysHasNegativeRule\":true,\"userHasBook\":true,\"userSampleCount\":3,\"userLen\":679,\"judgedBook\":\"紅樓夢\"}"
+    },
+    {
+      "name": "AI 判定的强度持久化到这本书上，且没污染全局兜底值",
+      "pass": true,
+      "detail": "{\"persisted\":4,\"note\":\"半文半白，长句多\",\"eff\":4,\"globalDef\":5}"
+    },
+    {
+      "name": "强度一变，旧的润色稿作废并按新强度重做",
+      "pass": true,
+      "detail": "请求 7 → 13，本轮强度 +4"
+    },
+    {
+      "name": "润色提示词里带上了强度与「提密度/易读」两个方向",
+      "pass": true,
+      "detail": "{\"strength\":true,\"density\":true}"
+    },
+    {
+      "name": "当前屏的「润色版」标签带强度数字",
+      "pass": true,
+      "detail": "\"润色版 · +4\""
+    },
+    {
+      "name": "润色版按钮的提示写明强度",
+      "pass": true,
+      "detail": "润色强度 +4 · 标准润色"
+    },
+    {
+      "name": "滑块可以拖到 0（不润色）",
+      "pass": true,
+      "detail": "{\"value\":\"0\",\"num\":\"0\",\"name\":\"不润色\"}"
+    },
+    {
+      "name": "强度 0 时润色版＝原文，且不再请求模型",
+      "pass": true,
+      "detail": "请求 13 → 13，文本一致，chip 润色版 · 0"
+    },
+    {
+      "name": "手动改成 0 之后仍记得 AI 判过多少（可一键调回）",
+      "pass": true,
+      "detail": "{\"aiVal\":4,\"src\":\"user\"}"
+    },
+    {
+      "name": "强度 0 时给出「未改写」说明而不是无效按钮",
+      "pass": true,
+      "detail": "润色强度是 0，未做改写 · 去调高"
+    },
+    {
+      "name": "「用 AI 的值」把滑块拨回 AI 判定值",
+      "pass": true,
+      "detail": "{\"value\":\"4\",\"num\":\"+4\",\"name\":\"标准润色\"}"
+    },
+    {
+      "name": "强度调回去后复用磁盘上同强度的旧稿（不再花 token）",
+      "pass": true,
+      "detail": "请求 13 → 13"
+    },
+    {
+      "name": "恢复润色版后正文是改写稿",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "讨论抽屉不再复制一份当前正文",
+      "pass": true,
+      "detail": "无重复正文节点"
+    },
+    {
+      "name": "空对话时讨论区完全空白、无引导文案",
+      "pass": true,
+      "detail": "\"\""
+    },
+    {
+      "name": "空对话时「重新生成回复」不出现",
+      "pass": true,
+      "detail": "已收起"
+    },
+    {
+      "name": "打开讨论后焦点落在输入框",
+      "pass": true,
+      "detail": "chat-input"
+    },
+    {
+      "name": "提问后收到流式回复",
+      "pass": true,
+      "detail": "[\"msg user::你这一段到底想说什么？\",\"msg assistant::AI这是一句模拟的流式回复。\"]"
+    },
+    {
+      "name": "讨论请求带着阅读上下文，但不把上文当成知识边界",
+      "pass": true,
+      "detail": "{\"ctx\":true,\"prev\":true,\"free\":true,\"oldRule\":false}"
+    },
+    {
+      "name": "讨论提示词里没有\"只能基于以上内容回答\"这类收紧约束",
+      "pass": true,
+      "detail": "你是一位博学、诚实、不奉承的阅读伙伴，正在陪用户读一本书。用户读到某一屏时停下来，想和你聊几句——可以聊这一屏，也可以由此聊开去。\n\n== 用户此刻正在读的内容（供你参考的背景，不是你的知识边界）==\n书名：《紅樓夢》\n当前章节：第一回　甄"
+    },
+    {
+      "name": "讨论后进度条出现留痕标记",
+      "pass": true,
+      "detail": "· 已讨论 1 屏"
+    },
+    {
+      "name": "Esc 收起讨论且停留在同一屏",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "输入框内空格只输入空格、不翻屏也不朗读",
+      "pass": true,
+      "detail": "{\"g\":6,\"input\":\"好 \",\"reading\":false}"
+    },
+    {
+      "name": "讨论中（未聚焦输入框）↑＝收起并退一屏",
+      "pass": true,
+      "detail": "6 → 5"
+    },
+    {
+      "name": "「继续读 →」收起抽屉并前进一屏",
+      "pass": true,
+      "detail": "5 → 6"
+    },
+    {
+      "name": "目录侧栏列出章节",
+      "pass": true,
+      "detail": "64 章"
+    },
+    {
+      "name": "点目录跳到该章第一屏",
+      "pass": true,
+      "detail": "{\"ci\":2,\"ui\":0}"
+    },
+    {
+      "name": "跳到正文最长的章",
+      "pass": true,
+      "detail": "賈雨村夤緣复舊職　林黛玉拋父進京都 · 67 屏"
+    },
+    {
+      "name": "长文模式渲染整章",
+      "pass": true,
+      "detail": "67 段 / 期望 67"
+    },
+    {
+      "name": "长文模式沿用润色模式",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "长文里点一段即选中",
+      "pass": true,
+      "detail": "第 108 屏"
+    },
+    {
+      "name": "长文模式里 Tab 直接讨论选中那一段",
+      "pass": true,
+      "detail": "{\"unitId\":\"c2u4\",\"wantId\":\"c2u4\",\"longMode\":true,\"bodyHasCopy\":false}"
+    },
+    {
+      "name": "长文模式的讨论抽屉同样不复制正文",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Esc 先收起讨论、仍留在长文模式",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "长文里再点同一段吸附回焦点模式",
+      "pass": true,
+      "detail": "{\"longMode\":false,\"ui\":4,\"g\":107}"
+    },
+    {
+      "name": "刷新后直接回到上次那一屏",
+      "pass": true,
+      "detail": "紅樓夢 第 108 屏 → 第 108 屏"
+    },
+    {
+      "name": "刷新后保持润色模式",
+      "pass": true,
+      "detail": "polished"
+    },
+    {
+      "name": "刷新后讨论留痕还在",
+      "pass": true,
+      "detail": "1 屏"
+    },
+    {
+      "name": "刷新后主题与字号恢复",
+      "pass": true,
+      "detail": "sepia / 19px"
+    },
+    {
+      "name": "翻回聊过的那一屏自动载入历史对话",
+      "pass": true,
+      "detail": "2 条消息"
+    },
+    {
+      "name": "历史对话内容是原来的那轮",
+      "pass": true,
+      "detail": "你这一段到底想说什么？AI这是一句模拟的流式回复。"
+    },
+    {
+      "name": "换到没聊过的屏，抽屉里不留上一屏的对话",
+      "pass": true,
+      "detail": "{\"msgs\":0,\"bodyText\":\"\",\"regenHidden\":true}"
+    },
+    {
+      "name": "书架列出已导入的书",
+      "pass": true,
+      "detail": "[\"紅樓夢\"]"
+    },
+    {
+      "name": "第二本（文言）也解析成功",
+      "pass": true,
+      "detail": "豆棚閒話 / 12 章 / 637 屏"
+    },
+    {
+      "name": "超长段被切成多屏",
+      "pass": true,
+      "detail": "637 屏来自长段切片"
+    },
+    {
+      "name": "新书一打开就自动让 AI 判一个强度，不用手动点",
+      "pass": true,
+      "detail": "判定请求 1 → 2（末次判定的是《豆棚閒話》，样本 3 段）；{\"title\":\"豆棚閒話\",\"level\":-3,\"src\":\"ai\",\"aiLevel\":-3,\"eff\":-3}"
+    },
+    {
+      "name": "润色强度按书各存各的，新书判定不覆盖上一本",
+      "pass": true,
+      "detail": "[{\"t\":\"豆棚閒話\",\"lv\":-3,\"src\":\"ai\"},{\"t\":\"紅樓夢\",\"lv\":4,\"src\":\"user\"}]"
+    },
+    {
+      "name": "书架累计两本",
+      "pass": true,
+      "detail": "[\"豆棚閒話\",\"紅樓夢\"]"
+    }
+  ],
+  "errors": [],
+  "data": {
+    "parse": {
+      "title": "紅樓夢",
+      "author": "Xueqin Cao",
+      "chapters": 64,
+      "total": 5704,
+      "hasCover": true,
+      "chTitles": [
+        "第一回　甄士隱夢幻識通靈　賈雨村風塵怀閨秀",
+        "第二回　賈夫人仙逝揚州城　冷子興演說榮國府",
+        "賈雨村夤緣复舊職　林黛玉拋父進京都",
+        "薄命女偏逢薄命郎　葫蘆僧亂判葫蘆案",
+        "第四回中既將薛家母子在榮府內寄居等事略已表明"
+      ],
+      "chSizes": [
+        57,
+        46,
+        67,
+        47,
+        52
+      ],
+      "first": "此開卷第一回也．作者自云：因曾歷過一番夢幻之后，故將真事隱去， 而借\"通靈\"之說，撰此《石頭記》一書也．故曰\"甄士隱\"云",
+      "kinds": [
+        57,
+        45,
+        67,
+        46,
+        52,
+        50
+      ],
+      "backend": "idb",
+      "parseMs": 203
+    },
+    "focusContext": {
+      "count": 19,
+      "curIdx": 6,
+      "chapters": 1,
+      "displayNone": 0,
+      "zeroSize": 0,
+      "curBlur": "none",
+      "nearBlur": "blur(2.4px)",
+      "farBlur": "blur(4.9px)",
+      "curOpacity": 1,
+      "nearOpacity": 0.6,
+      "farOpacity": 0.21,
+      "above": 6,
+      "below": 12,
+      "offsetFromCenter": 0,
+      "stageH": 804,
+      "stageScrollTop": 1455,
+      "locked": true
+    },
+    "polishRequest": [
+      {
+        "model": "deepseek-v4-flash",
+        "thinking": {
+          "type": "disabled"
+        },
+        "level": "+5",
+        "sysHasStrength": true,
+        "sysHasDensityRule": true,
+        "sysLen": 588,
+        "userLen": 197
+      },
+      {
+        "model": "deepseek-v4-flash",
+        "thinking": {
+          "type": "disabled"
+        },
+        "level": "+5",
+        "sysHasStrength": true,
+        "sysHasDensityRule": true,
+        "sysLen": 588,
+        "userLen": 189
+      }
+    ],
+    "level": {
+      "pre": {
+        "eff": 5,
+        "def": 5
+      },
+      "judgeCalls0": 0,
+      "ui": {
+        "hasRange": true,
+        "min": "-10",
+        "max": "10",
+        "step": "1",
+        "value": "5",
+        "num": "+5",
+        "name": "标准润色",
+        "desc": "只处理真正费解的地方：生僻词、超长句、翻译腔，其余保持原样。",
+        "minusText": "−",
+        "plusText": "＋",
+        "aiText": "这本书还没让 AI 判断过。按 AI 判断",
+        "hint": "只作用于《紅樓夢》。0＝不润色；正数越大越易读；负数越小说得越密（压掉废话）。改完会按新强度重新生成润色稿。"
+      },
+      "judged": {
+        "bookVal": 4,
+        "src": "ai",
+        "note": "半文半白，长句多",
+        "eff": 4,
+        "uiValue": "4",
+        "uiNum": "+4",
+        "aiText": "AI 判断《紅樓夢》适合 +4（标准润色）：半文半白，长句多重新判断"
+      },
+      "judgeRequest": {
+        "model": "deepseek-v4-flash",
+        "thinking": {
+          "type": "disabled"
+        },
+        "maxTokens": 200,
+        "sysHasScale": true,
+        "sysHasNegativeRule": true,
+        "userHasBook": true,
+        "userSampleCount": 3,
+        "userLen": 679,
+        "judgedBook": "紅樓夢"
+      },
+      "saved": {
+        "persisted": 4,
+        "note": "半文半白，长句多",
+        "eff": 4,
+        "globalDef": 5
+      },
+      "zero": {
+        "eff": 0,
+        "aiVal": 4,
+        "src": "user",
+        "text": "那紅塵中有卻有些樂事，但不能永遠依恃，況又有`美中 不足，好事多魔'八個字緊相連屬，瞬息間則又樂极悲生，人非物換，究竟 是到頭一夢，万境歸空，倒不如不去的好。”這石凡心已熾，那里听得進這 話去，乃复苦求再四．二仙知不可強制，乃歎道：“此亦靜极慫級*，無中 生有之數也．",
+        "chip": "润色版 · 0",
+        "actions": "润色强度是 0，未做改写 · 去调高",
+        "pending": false
+      }
+    },
+    "chatRequestBody": {
+      "model": "deepseek-v4-flash",
+      "thinking": {
+        "type": "disabled"
+      },
+      "msgRoles": [
+        "system",
+        "user"
+      ],
+      "systemHasReadingContext": true,
+      "systemAllowsOwnKnowledge": true,
+      "systemHasOldHardRule": false,
+      "systemMentionsPrevUnits": true,
+      "systemRenderedSample": "你是一位博学、诚实、不奉承的阅读伙伴，正在陪用户读一本书。用户读到某一屏时停下来，想和你聊几句——可以聊这一屏，也可以由此聊开去。\n\n== 用户此刻正在读的内容（供你参考的背景，不是你的知识边界）==\n书名：《紅樓夢》\n当前章节：第一回　甄"
+    },
+    "reload": {
+      "beforeReload": {
+        "g": 107,
+        "mode": "polished",
+        "title": "紅樓夢",
+        "chatted": 1
+      },
+      "afterReload": {
+        "g": 107,
+        "mode": "polished",
+        "title": "紅樓夢",
+        "chatted": 1,
+        "theme": "sepia",
+        "font": "19px"
+      }
+    },
+    "parse2": {
+      "title": "豆棚閒話",
+      "chapters": 12,
+      "total": 637,
+      "partUnits": 637,
+      "longPara": 280
+    },
+    "autoJudge": {
+      "title": "豆棚閒話",
+      "level": -3,
+      "src": "ai",
+      "aiLevel": -3,
+      "eff": -3
+    }
+  },
+  "finishedAt": "2026-10-02T22:17:08.070Z",
+  "summary": {
+    "total": 106,
+    "passed": 106,
+    "failed": [],
+    "polishCalls": 25,
+    "chatCalls": 1
+  }
+}

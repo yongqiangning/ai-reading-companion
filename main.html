@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="sepia">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 伴读</title>
+<link rel="icon" type="image/svg+xml" sizes="any" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+
+<!-- ═══════════════ 书架 / 欢迎 ═══════════════ -->
+<section id="shelf-screen" class="screen" hidden>
+  <div class="shelf-inner">
+    <header class="shelf-head">
+      <div>
+        <h1 id="shelf-title">AI 伴读</h1>
+        <p id="shelf-sub" class="muted">把一本读起来费劲的书，按你的节奏一屏一屏读下去。</p>
+      </div>
+      <button id="shelf-settings" class="btn ghost" type="button">设置</button>
+    </header>
+
+    <div id="dropzone" class="dropzone">
+      <div class="dz-icon">＋</div>
+      <div class="dz-main">把 EPUB 文件拖到这里</div>
+      <div class="dz-actions">
+        <button id="pick-file-1" class="btn primary" type="button">选择 EPUB 文件</button>
+      </div>
+      <p class="dz-note">目前只支持 EPUB。MOBI / AZW3 / PDF 建议先用 Calibre 转成 EPUB。</p>
+    </div>
+
+    <h2 class="shelf-h2">我的书架</h2>
+    <div id="book-grid" class="book-grid"></div>
+    <p id="shelf-empty" class="muted empty-note" hidden>还没有书。导入一本 EPUB 就开始。</p>
+  </div>
+</section>
+
+<!-- ═══════════════ 阅读器 ═══════════════ -->
+<section id="reader-screen" class="screen" hidden>
+  <header class="topbar">
+    <div class="tb-left">
+      <button id="btn-toc" class="icon-btn" type="button" title="目录 (T)">≡</button>
+      <div class="tb-book">
+        <span id="tb-title" class="tb-title">书名</span>
+        <span id="tb-pos" class="tb-pos">第 1 章 · 1/1 屏</span>
+      </div>
+    </div>
+    <div class="tb-right">
+      <div class="mode-switch" role="group" aria-label="原文 / 润色版">
+        <button id="mode-original" class="mode-btn" type="button">原文</button>
+        <button id="mode-polished" class="mode-btn" type="button">润色版</button>
+      </div>
+      <button id="btn-long" class="icon-btn" type="button" title="连续长文 (C)">文</button>
+      <button id="btn-home" class="icon-btn" type="button" title="回到书架 (Esc)" aria-label="回到书架">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3.5 10.5 12 3.8l8.5 6.7"></path>
+          <path d="M5.6 9.4V20h12.8V9.4"></path>
+          <path d="M9.8 20v-5.2h4.4V20"></path>
+        </svg>
+      </button>
+      <button id="btn-settings" class="icon-btn" type="button" title="设置">⚙</button>
+    </div>
+  </header>
+
+  <div class="mid">
+    <aside id="toc-pane" class="toc-pane" hidden>
+      <div class="pane-head">目录</div>
+      <nav id="toc-list" class="toc-list"></nav>
+    </aside>
+
+    <main id="stage" class="stage">
+      <div id="focus-view"></div>
+      <div id="long-view" hidden></div>
+    </main>
+
+    <aside id="chat-pane" class="chat-pane" hidden>
+      <div class="pane-head chat-head">
+        <span id="chat-title">这一屏的讨论</span>
+        <button id="chat-close" class="icon-btn small" type="button" title="收起 (Esc)">✕</button>
+      </div>
+      <div id="chat-body" class="chat-body"></div>
+      <div class="chat-composer">
+        <textarea id="chat-input" rows="2" placeholder="问点什么…（回车发送，Shift+回车换行）"></textarea>
+        <div class="composer-row">
+          <span id="chat-status" class="chat-status"></span>
+          <button id="chat-send" class="btn primary small" type="button">发送</button>
+        </div>
+        <div class="composer-row actions">
+          <button id="chat-next" class="btn ghost small" type="button">继续读 →</button>
+          <button id="chat-regen" class="btn ghost small" type="button">重新生成回复</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="hud">
+    <div class="progress-wrap">
+      <div id="progress-track" class="progress-track">
+        <div id="progress-fill" class="progress-fill"></div>
+        <div id="progress-marks" class="progress-marks"></div>
+      </div>
+      <div class="progress-meta">
+        <span id="hud-percent">0%</span>
+        <span id="hud-chatted" class="muted"></span>
+      </div>
+    </div>
+    <div class="hud-keys">
+      <span><kbd>空格</kbd> 朗读这一屏</span>
+      <span><kbd>↓</kbd>/<kbd>→</kbd> 下一屏</span>
+      <span><kbd>↑</kbd>/<kbd>←</kbd> 上一屏</span>
+      <span><kbd>回车</kbd> 润色版</span>
+      <span><kbd>Tab</kbd> 讨论</span>
+      <span><kbd>S</kbd> 回复朗读</span>
+      <span><kbd>C</kbd> 长文</span>
+      <span><kbd>T</kbd> 目录</span>
+      <span><kbd>?</kbd> 帮助</span>
+      <span id="hud-reading" class="hud-reading" hidden><i class="dot"></i>正在朗读这一屏</span>
+    </div>
+  </footer>
+</section>
+
+<div id="modal-root"></div>
+<div id="overlay" class="overlay" hidden>
+  <div class="overlay-card">
+    <div class="spinner"></div>
+    <div id="overlay-text">正在解析…</div>
+    <div id="overlay-sub" class="muted small"></div>
+  </div>
+</div>
+<div id="toast-root" class="toast-root"></div>
+<input id="file-input" type="file" accept=".epub,application/epub+zip" hidden>
+
+<script src="assets/vendor/jszip.min.js"></script>
+<script src="assets/store.js"></script>
+<script src="assets/books.js"></script>
+<script src="assets/prompts.js"></script>
+<script src="assets/llm.js"></script>
+<script src="assets/tts.js"></script>
+<script src="assets/ui.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

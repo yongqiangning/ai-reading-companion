@@ -1,0 +1,23 @@
+# ── macOS ───────────────────────────────────────────────
+.DS_Store
+._*
+
+# ── WorkBuddy 本地工作数据（记忆 / 开发日志）─────────────
+.workbuddy/
+
+# ── Python ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# ── 本地朗读服务：虚拟环境与模型权重（约 4.3GB，不进仓库）──
+# 用 tts-server/setup-qwen3.sh 自行下载
+tts-server/.venv-qwen3/
+tts-server/qwen3-model/
+tts-server/qwen3-base-model/
+
+# ── 本地朗读服务：运行期产物 ─────────────────────────────
+tts-server/*.log
+tts-server/*.pid
+tts-server/clone-voices/
+tts-server/_smoke-clones/
