@@ -182,7 +182,14 @@ kbd{
 .tb-book{display:flex;flex-direction:column;min-width:0;line-height:1.35}
 .tb-title{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;max-width:36vw}
-.tb-pos{font-size:11.5px;color:var(--ink3);white-space:nowrap}
+/* 章节 → 小节 面包屑：父章浅、本章重，后面跟屏位 */
+.tb-pos{font-size:11.5px;color:var(--ink3);white-space:nowrap;
+  display:flex;align-items:baseline;gap:6px;min-width:0}
+.tb-pos [hidden]{display:none}
+.tb-crumb-parent{min-width:0;overflow:hidden;text-overflow:ellipsis;max-width:26vw}
+.tb-crumb-sep{color:var(--ink3);opacity:.55}
+.tb-crumb-cur{color:var(--ink2);font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;max-width:36vw}
+.tb-meta{color:var(--ink3)}
 
 .mode-switch{display:flex;background:var(--panel2);border-radius:8px;padding:2px;gap:2px}
 .mode-btn{

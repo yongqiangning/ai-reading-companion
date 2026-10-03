@@ -248,6 +248,8 @@
         throw new Error('这本书的正文没能读出来，请重新导入。');
       }
       S.chapters = content.chapters;
+      // 还原「章 → 小节」的父子关系（只看标题，磁盘上的旧书也能补出来），顶栏面包屑要用
+      Books.linkHierarchy(S.chapters);
       var idx = Books.index(S.chapters);
       S.starts = idx.starts;
       S.total = idx.total;
@@ -588,9 +590,16 @@
   function renderTopbar() {
     if (!S.book) return;
     var ch = S.chapters[S.ci] || { title: '', units: [] };
+    var crumb = Books.chapterCrumb(S.chapters, S.ci);
     $('tb-title').textContent = '《' + S.book.title + '》';
-    $('tb-pos').textContent = (ch.title || ('第 ' + (S.ci + 1) + ' 章')) +
-      ' · ' + (S.ui + 1) + '/' + ch.units.length + ' 屏' +
+
+    // 先章节名、后小节名：父章只在真的还原出来时才占位（认不出来的书保持原样）
+    var par = crumb.parent || '';
+    $('tb-parent').textContent = par;
+    $('tb-parent').hidden = !par;
+    $('tb-crumb-sep').hidden = !par;
+    $('tb-cur').textContent = crumb.title || ('第 ' + (S.ci + 1) + ' 章');
+    $('tb-meta').textContent = '· ' + (S.ui + 1) + '/' + ch.units.length + ' 屏' +
       '   ·   全书 ' + (globalIndex() + 1) + '/' + S.total;
   }
 

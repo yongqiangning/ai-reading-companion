@@ -556,6 +556,62 @@
     return g;
   }
 
+  // ── 章节层级：把拍平的一维章节列表还原成「父章 → 小节」 ────
+  /**
+   * 解析时每个 spine 文档被拍平成一串 chapter，谁属于谁的信息就丢了
+   * （《乌合之众》里「第二章 群体的情感与道德」和它的「2.群体的易受暗示和轻信」
+   * 在 chapters 里是平级的两个兄弟）。顶栏要显示「章名 → 小节名」，
+   * 这里按标题样式把父级还回来：
+   *   lv1  卷/篇/部 —— 真正的容器；前言/导言/附录 这类整书单篇也算 lv1，
+   *        但它只是「打断了上一章」，不当别人的爹
+   *   lv2  第X章、一、二、……
+   *   lv3  小节：1. / 9.1. / 3） / 第X节
+   *   lv0  认不出来 → 不猜，只显示自己
+   * 只看标题，所以磁盘上的旧书（解析时还没有这套逻辑）照样能用；就地改，幂等。
+   */
+  var PART_RE = new RegExp('^第\\s*' + CN_NUM + '+\\s*[卷篇部]');
+  var FRONT_RE = /^(作者|译者|编者)?(序|序言|序章|自序|代序|前言|导言|引言|绪论|楔子|引子|题记|凡例|后记|跋|附录|附记|尾声|终章|结语|结束语|注释|注)(\s|　|$|：|:)/;
+  var CHAP_RE = new RegExp('^第\\s*' + CN_NUM + '+\\s*[章回]|^' + CN_NUM + '+\\s*、');
+  var SECT_RE = new RegExp('^\\d+(\\.\\d+)*\\s*[\\.、]|^[\\(（]\\s*' + CN_NUM + '+\\s*[\\)）]|^\\d+\\s*[\\)）]|^第\\s*' + CN_NUM + '+\\s*节');
+
+  function titleLevel(title) {
+    var s = String(title || '').trim();
+    if (!s) return 0;
+    if (PART_RE.test(s) || FRONT_RE.test(s)) return 1;
+    if (CHAP_RE.test(s)) return 2;
+    if (SECT_RE.test(s)) return 3;
+    return 0;
+  }
+
+  function linkHierarchy(chapters) {
+    if (!chapters || !chapters.length) return chapters;
+    var part = '', chap = '';
+    chapters.forEach(function (ch) {
+      var t = String(ch.title || '').trim();
+      var lv = titleLevel(t);
+      ch.level = lv;
+      var parent = '';
+      if (lv === 1) {
+        part = PART_RE.test(t) ? ch.title : '';
+        chap = '';
+      } else if (lv === 2) {
+        parent = part; chap = ch.title;
+      } else if (lv === 3) {
+        parent = chap || part;
+      }
+      ch.parentTitle = (parent && parent !== ch.title) ? parent : '';
+    });
+    return chapters;
+  }
+
+  /** 顶栏用的面包屑：父章 + 本章标题（没算过层级就地补一次） */
+  function chapterCrumb(chapters, ci) {
+    var ch = chapters && chapters[ci];
+    if (!ch) return { parent: '', title: '' };
+    if (ch.level === undefined) linkHierarchy(chapters);
+    return { parent: ch.parentTitle || '', title: ch.title || '' };
+  }
+
   global.Books = {
     parse: parse,
     extractBlocks: extractBlocks,
@@ -567,6 +623,9 @@
     sha256hex: sha256hex,
     index: index,
     locate: locate,
-    toGlobal: toGlobal
+    toGlobal: toGlobal,
+    titleLevel: titleLevel,
+    linkHierarchy: linkHierarchy,
+    chapterCrumb: chapterCrumb
   };
 })(window);
