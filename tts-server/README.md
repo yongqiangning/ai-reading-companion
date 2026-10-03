@@ -325,7 +325,7 @@ def gen():
 ## 验证
 
 ```bash
-cd /Users/MacBook/.workbuddy/binaries/node/workspace
+cd <放 e2e 脚本的目录>     # 须在该目录下跑，node_modules 才解析得到
 node e2e-qwen3.mjs      # 49 项：接口 / 整段 / 旧音色名兼容 / 流式首包 / 页面里真出声 /
                         #        打断 / 404 回落 / 打断后服务端不死锁
 node e2e-clone.mjs      # 78 项：克隆音色的完整用户链路（78 项，见下）

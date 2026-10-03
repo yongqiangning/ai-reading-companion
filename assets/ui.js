@@ -260,7 +260,7 @@
       grid.push(h('div', { text: r[1] }));
     });
     var body = h('div', {}, [
-      h('p', { class: 'box-note', text: '焦点模式下当前段居中、前后文按距离虚化，正文不会滚动；用键或滚轮一屏一屏走。正文可以直接划词复制，也可以点前后文里虚化的某一段跳过去。空格读的是你此刻看到的这一版正文，换屏、换模式、切长文都会自动停下。讨论输入框里所有单字母快捷键与空格都不生效，正常输入。' }),
+      h('p', { class: 'box-note', text: '焦点模式下当前段居中、前后文按距离虚化，正文不会滚动；用键或滚轮一屏一屏走。正文可以直接划词复制，也可以点前后文里虚化的某一段跳过去。空格读的是你此刻看到的这一版正文，换屏、换模式、切长文都会自动停下。顶栏那个「音」＝翻屏自动朗读：亮着时每翻到新的一屏就自己念，灰着时不动。讨论输入框里所有单字母快捷键与空格都不生效，正常输入。' }),
       h('div', { class: 'kbd-list' }, grid)
     ]);
     return modal('快捷键', body, [h('button', { class: 'btn primary', type: 'button', onclick: onClose }, ['知道了'])], onClose);
@@ -541,6 +541,24 @@
       default: 'Serena', alloy: 'Serena', zf_xiaoxiao: 'Vivian',
       'zh-CN-XiaoxiaoNeural': 'Vivian', 'zh-CN-YunxiNeural': 'Uncle_Fu'
     };
+    // 预设音色的中文特点，格式固定「性别，特点」——英文名光摆着看不出男女、
+    // 也看不出是方言还是外语，用户挑音色等于瞎猜。只在下拉里显示，
+    // option 的 value 仍是纯英文名（服务端认的是那个）。
+    // 表里没有的音色（服务端以后加了新的）就只显示名字，不编描述。
+    var PRESET_DESC = {
+      Serena: '女声，温柔',
+      Vivian: '女声，明亮活泼',
+      Uncle_Fu: '男声，青年',
+      Dylan: '男声，北京口音',
+      Eric: '男声，四川口音',
+      Aiden: '男声，英语',
+      Ryan: '男声，英语',
+      Ono_Anna: '女声，日语',
+      Sohee: '女声，韩语'
+    };
+    function presetLabel(n) {
+      return PRESET_DESC[n] ? n + '·' + PRESET_DESC[n] : n;
+    }
     var savedVoice = String(settings.ttsAudio8Voice || 'Serena');
     var a8VoiceList = [];          // 从服务端拉回来的候选（扁平，含克隆音色）
     var a8PresetList = [];         // 只含预设音色
@@ -592,7 +610,8 @@
       if (presets.length) {
         var op = h('optgroup', { label: '预设音色' });
         presets.forEach(function (n) {
-          op.appendChild(h('option', { value: n, text: n === val && note ? n + note : n }));
+          var label = presetLabel(n);
+          op.appendChild(h('option', { value: n, text: n === val && note ? label + note : label }));
         });
         a8Voice.appendChild(op);
       }
@@ -621,8 +640,8 @@
           paintA8Voices();
           paintCloneList();
           var nClone = a8Clones.filter(function (c) { return c.has_audio !== false; }).length;
-          a8VoiceNote.textContent = '预设音色里Serena / Vivian 是中文女声，Uncle_Fu 是中文男声，'
-            + 'Dylan 是北京口音、Eric 是四川口音。'
+          // 性别/口音已经跟在每个音色名后面了，这里不再重复一遍
+          a8VoiceNote.textContent = 'Serena 是默认音色，选中后点「试听」听效果。'
             + (nClone ? ('　已有 ' + nClone + ' 个克隆音色。') : '');
         } else if (!quiet) {
           a8VoiceNote.textContent = '没连上本地服务，先列出默认音色。点「测试本地服务」能重新拉一次。';
@@ -1051,17 +1070,8 @@
       audio8Row
     ]), '讨论里 AI 的每句回复都会跟着读出来；中途再发一条消息会打断上一段。读的时候按 S 可以直接停。');
 
-    // 正文朗读（空格那个）。和上面「朗读 AI 回复」是两回事：这里管的是翻屏之后
-    // 要不要自动开口，开关本身不改变空格键的语义（正在读时按一下照样是停）。
-    var autoSpeakBox = input({ type: 'checkbox', id: 'auto-speak' });
-    autoSpeakBox.checked = settings.autoSpeak === true;
-
-    var autoSpeakField = field('翻屏自动朗读', h('div', {}, [
-      h('label', { class: 'inline-check', for: 'auto-speak' }, [
-        autoSpeakBox,
-        h('span', { text: '翻到新的一屏，直接开始念' })
-      ])
-    ]), '打开后，翻屏（↓/→、滚轮、[ / ]）会自动朗读新这一屏，省掉第一次按空格。空格键的行为不变：再按一次＝停。切模式、进长文、回书架照旧自动停。');
+    // 正文朗读的「翻屏自动朗读」开关不在这里 —— 它挪到阅读页顶栏的那个「音」了
+    // （听的时候随手就能关，不用为了关它去开设置弹窗）。字段仍叫 settings.autoSpeak。
 
     var io = h('div', { class: 'unit-actions' }, [
       h('button', { class: 'btn ghost small', type: 'button', onclick: function () { handlers.onExport(); } }, ['导出全部数据']),
@@ -1080,7 +1090,6 @@
       field('行距', h('div', { class: 'range-row' }, [lineInput, lineVal])),
       field('主题', themeWrap),
       ttsField,
-      autoSpeakField,
       h('div', { class: 'field' }, [
         h('label', { text: '数据' }),
         io
@@ -1106,8 +1115,7 @@
         ttsRate: Number(rateInput.value) || 1,
         ttsAudio8Url: a8Url.value.trim() || 'http://127.0.0.1:8024',
         ttsAudio8Voice: (a8Voice.value || '').trim() || 'Serena',
-        ttsIdleUnload: !!idleUnloadBox.checked,
-        autoSpeak: !!autoSpeakBox.checked
+        ttsIdleUnload: !!idleUnloadBox.checked
       };
     }
 

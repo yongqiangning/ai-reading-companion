@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-10-02T22:16:36.318Z",
+  "startedAt": "2026-10-03T07:46:00.454Z",
   "checks": [
     {
       "name": "首屏为选书界面",
@@ -9,7 +9,7 @@
     {
       "name": "导入并解析 EPUB",
       "pass": true,
-      "detail": "紅樓夢 / 64 章 / 5704 屏 / 203ms"
+      "detail": "紅樓夢 / 64 章 / 5704 屏 / 113ms"
     },
     {
       "name": "解析出书名与作者",
@@ -205,6 +205,11 @@
       "name": "回车切到润色版并显示改写稿",
       "pass": true,
       "detail": "【POLISHED】那紅塵中有卻有些樂事，但不能永遠依恃，況又有`美中 不足，好事多魔'八個字緊相連"
+    },
+    {
+      "name": "润色稿里不显示引用角标",
+      "pass": true,
+      "detail": "\"制，乃歎道：“此亦靜极慫級*，無中 生有之數也．\""
     },
     {
       "name": "润色模式按钮高亮",
@@ -527,6 +532,11 @@
       "detail": "[{\"t\":\"豆棚閒話\",\"lv\":-3,\"src\":\"ai\"},{\"t\":\"紅樓夢\",\"lv\":4,\"src\":\"user\"}]"
     },
     {
+      "name": "磁盘里的旧润色稿同样不显示引用角标",
+      "pass": true,
+      "detail": "\"【旧稿】磁盘里带角标的润色稿\""
+    },
+    {
       "name": "书架累计两本",
       "pass": true,
       "detail": "[\"豆棚閒話\",\"紅樓夢\"]"
@@ -564,7 +574,7 @@
         50
       ],
       "backend": "idb",
-      "parseMs": 203
+      "parseMs": 113
     },
     "focusContext": {
       "count": 19,
@@ -594,7 +604,7 @@
         "level": "+5",
         "sysHasStrength": true,
         "sysHasDensityRule": true,
-        "sysLen": 588,
+        "sysLen": 740,
         "userLen": 197
       },
       {
@@ -605,7 +615,7 @@
         "level": "+5",
         "sysHasStrength": true,
         "sysHasDensityRule": true,
-        "sysLen": 588,
+        "sysLen": 740,
         "userLen": 189
       }
     ],
@@ -713,12 +723,12 @@
       "eff": -3
     }
   },
-  "finishedAt": "2026-10-02T22:17:08.070Z",
+  "finishedAt": "2026-10-03T07:46:31.744Z",
   "summary": {
-    "total": 106,
-    "passed": 106,
+    "total": 108,
+    "passed": 108,
     "failed": [],
-    "polishCalls": 25,
+    "polishCalls": 32,
     "chatCalls": 1
   }
 }

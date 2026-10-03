@@ -391,6 +391,19 @@
   }
 
   // ═══════════ 润色稿：加载 / 生成 / 预取 ═══════════
+  /**
+   * 原文里的引用角标（[11]、[12]、[1-3]、[11,12]，含全角）在润色稿里一律不显示。
+   * 提示词已经要求模型删掉，这里是兜底：模型没删干净、或磁盘里的旧稿都要抹平。
+   * 只在「进入内存/写进磁盘」这一个口子上过滤，之后渲染、朗读、长文视图共用同一份文本。
+   * ★ 整屏只有标号的极端情况宁可不删，也不返回空串（空串会被当成「没有润色稿」而卡在 pending）。
+   */
+  var REF_MARK_RE = /[ \t\u3000]*[\[［][ \t\u3000]*\d+(?:[ \t\u3000]*[-–—~～,，、][ \t\u3000]*\d+)*[ \t\u3000]*[\]］](?:[ \t\u3000]+(?=[^A-Za-z0-9]|$))?/g;
+  function stripRefMarks(text) {
+    var s = String(text == null ? '' : text);
+    var out = s.replace(REF_MARK_RE, '');
+    return out.trim() ? out : s;
+  }
+
   /** 内存里某一屏当前强度下的润色稿（强度改过就不算数） */
   function rewriteText(unit) {
     var rec = S.rewrites.get(keyOf(unit));
@@ -404,7 +417,11 @@
     var lv = levelNow();
     return Store.getRewrite(S.book.id, unit.id).then(function (rec) {
       // 旧稿如果是在别的强度下生成的，不能拿来用——当它不存在，让它按新强度重做
-      if (rec && rec.text && rec.level === lv) { S.rewrites.set(key, { text: rec.text, level: lv }); return rec.text; }
+      if (rec && rec.text && rec.level === lv) {
+        var clean = stripRefMarks(rec.text);
+        S.rewrites.set(key, { text: clean, level: lv });
+        return clean;
+      }
       S.rewrites.set(key, null);
       return null;
     }).catch(function () {
@@ -438,8 +455,10 @@
       }).then(function (text) {
         // 生成期间用户改了强度 → 这份稿子作废，别写进缓存，交给 schedule() 按新强度重做
         if (S.book !== book || lv !== levelNow()) return null;
-        S.rewrites.set(key, { text: text, level: lv });
-        return Store.saveRewrite(bookId, unit.id, text, S.settings.model, lv).then(function () { return text; });
+        // 引用角标不许进内存、也不许进磁盘：显示、朗读、长文都读这份文本
+        var clean = stripRefMarks(text);
+        S.rewrites.set(key, { text: clean, level: lv });
+        return Store.saveRewrite(bookId, unit.id, clean, S.settings.model, lv).then(function () { return clean; });
       });
     }).catch(function (err) {
       S.rwErr.set(key, LLM.humanize(err));
@@ -563,6 +582,7 @@
     }
     $('btn-toc').classList.toggle('on', S.tocOpen);
     $('btn-long').classList.toggle('on', S.longMode);
+    $('btn-auto-speak').classList.toggle('on', !!(S.settings && S.settings.autoSpeak));
   }
 
   function renderTopbar() {
@@ -1175,6 +1195,7 @@
     $('btn-settings').addEventListener('click', openSettings);
     $('btn-toc').addEventListener('click', function () { S.tocOpen = !S.tocOpen; renderToc(); syncButtons(); });
     $('btn-long').addEventListener('click', toggleLong);
+    $('btn-auto-speak').addEventListener('click', toggleAutoSpeak);
     $('mode-original').addEventListener('click', function () { setMode('original'); });
     $('mode-polished').addEventListener('click', function () { setMode('polished'); });
 
@@ -1378,6 +1399,26 @@
     cancelAutoSpeak();
     if (!autoSpeakArmed()) return;
     autoSpeakTimer = setTimeout(fireAutoSpeak, AUTO_SPEAK_DELAY);
+  }
+
+  /** 顶栏「音」：翻屏自动朗读的开 / 关。
+   *  原来在设置弹窗里，挪到阅读页是为了「听着的时候随手就能关」——
+   *  关掉顺手把这一屏正在念的也停住，否则按钮已经灰了、声音还在响。 */
+  function toggleAutoSpeak() {
+    if (!S.settings) S.settings = {};
+    var on = !S.settings.autoSpeak;
+    S.settings.autoSpeak = on;
+    Store.saveSettings({ autoSpeak: on }).catch(function () {});
+    if (!on) {
+      cancelAutoSpeak();
+      if (unitTtsLive()) stopUnitTts();
+    }
+    syncButtons();
+    UI.toast(on
+      ? (S.longMode
+        ? '翻屏自动朗读已打开：回到焦点阅读才生效（长文里空格交给浏览器翻页）。'
+        : '翻屏自动朗读已打开：翻到新的一屏就会自动念。')
+      : '翻屏自动朗读已关闭。');
   }
 
   /** S 键：开 / 关朗读。开着的时候按 = 立刻停 */

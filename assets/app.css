@@ -84,6 +84,45 @@ kbd{
 .icon-btn.small{width:26px;height:26px;font-size:13px}
 .icon-btn.on{background:var(--accent-soft);color:var(--accent)}
 .icon-btn svg{display:block;margin:0 auto}
+/* 翻屏自动朗读（顶栏「音」）：关＝灰着，开＝和「文」一样的强调色。
+   用 id 选择器是因为要盖掉 .icon-btn 的默认色，顺带把 :hover 也补回来。 */
+#btn-auto-speak:not(.on){color:var(--ink3)}
+#btn-auto-speak:not(.on):hover{background:var(--panel2);color:var(--ink)}
+
+/* 悬浮说明走伪元素，不用原生 title —— 原生那个要等约 1 秒才弹，
+   用户盯着按钮看半天会以为功能没做（v1.17 用户反馈的就是这一条）。
+   悬浮 60ms 就出（只防手滑扫过），移开立即收；pointer-events:none 免得它挡住自己。 */
+.icon-btn[data-tip]{position:relative}
+.icon-btn[data-tip]::after{
+  content:attr(data-tip);
+  position:absolute;top:calc(100% + 9px);right:-4px;
+  width:max-content;max-width:280px;
+  background:var(--panel);color:var(--ink);border:1px solid var(--line);
+  border-radius:8px;padding:7px 10px;box-shadow:var(--shadow);
+  font-size:12.5px;font-weight:400;line-height:1.55;text-align:left;
+  opacity:0;visibility:hidden;transform:translateY(-4px);
+  pointer-events:none;z-index:60;
+  transition:opacity .12s ease,transform .12s ease,visibility 0s linear .12s;
+}
+.icon-btn[data-tip]:hover::after,
+.icon-btn[data-tip]:focus-visible::after{
+  opacity:1;visibility:visible;transform:translateY(0);
+  transition-delay:.06s,.06s,0s;
+}
+/* 指向按钮的小尖角（旋转 45° 的方块，只留左上两条边），让它一眼知道是谁的说明 */
+.icon-btn[data-tip]::before{
+  content:'';position:absolute;top:calc(100% + 5px);right:15px;
+  width:9px;height:9px;background:var(--panel);
+  border-left:1px solid var(--line);border-top:1px solid var(--line);
+  transform:rotate(45deg) translate(-2px,-2px);
+  opacity:0;visibility:hidden;pointer-events:none;z-index:61;
+  transition:opacity .12s ease,visibility 0s linear .12s;
+}
+.icon-btn[data-tip]:hover::before,
+.icon-btn[data-tip]:focus-visible::before{
+  opacity:1;visibility:visible;transform:rotate(45deg) translate(0,0);
+  transition-delay:.06s,0s;
+}
 
 /* ═══════════════ 书架 ═══════════════ */
 .screen{position:fixed;inset:0;overflow:auto}

@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-09-30T16:52:32.250Z",
+  "startedAt": "2026-10-03T07:08:08.176Z",
   "checks": [
     {
       "name": "页面里的语音合成出口已被替换成可观测的假实现",
@@ -40,12 +40,12 @@
     {
       "name": "底部 HUD 里有 S 键说明",
       "pass": true,
-      "detail": "\n      空格/↓ 下一屏\n      ↑ 上一屏\n      回车 润色版\n      Tab 讨论\n      S 朗读\n      C 长文\n      T 目录\n      ? 帮助\n    "
+      "detail": "\n      空格 朗读这一屏\n      ↓/→ 下一屏\n      ↑/← 上一屏\n      回车 润色版\n      Tab 讨论\n      S 回复朗读\n      C 长文\n      T 目录\n      ? 帮助\n      正在朗读这一屏\n    "
     },
     {
       "name": "帮助页里有 S 键说明",
       "pass": true,
-      "detail": "S开 / 关朗读。正在读时按一下＝立刻打断Shift + 回车讨论输入框内换行Es"
+      "detail": "S朗读 AI 回复的开 / 关；正在读时按一下＝立刻打断Shift + 回车讨论输"
     },
     {
       "name": "AI 回复被读了出来",
@@ -219,22 +219,16 @@
     {
       "name": "合成请求发给本地 /v1/audio/speech",
       "pass": true,
-      "detail": "合成请求 3 次"
+      "detail": "合成请求 4 次"
     },
     {
       "name": "请求体是 OpenAI 兼容格式",
-      "pass": true,
+      "pass": false,
       "detail": [
+        {},
         {
           "model": "arktts",
           "input": "第一句话在这里。",
-          "voice": "Serena",
-          "speed": 1,
-          "response_format": "wav"
-        },
-        {
-          "model": "arktts",
-          "input": "第二句呢！",
           "voice": "Serena",
           "speed": 1,
           "response_format": "wav"
@@ -243,8 +237,9 @@
     },
     {
       "name": "语速设置也会带给服务端",
-      "pass": true,
+      "pass": false,
       "detail": [
+        null,
         1,
         1,
         1
@@ -254,62 +249,16 @@
       "name": "发送给 TTS 的文本同样按句切好",
       "pass": true,
       "detail": [
+        null,
         "第一句话在这里。",
         "第二句呢！",
         "还没有结束，这是第三句？"
       ]
-    },
-    {
-      "name": "没把 markdown 标记带进 TTS 请求",
-      "pass": true,
-      "detail": [
-        "第一句话在这里。",
-        "第二句呢！",
-        "还没有结束，这是第三句？"
-      ]
-    },
-    {
-      "name": "整段回落时按响应头建 Blob（不写死 wav）",
-      "pass": true,
-      "detail": [
-        {
-          "type": "audio/mpeg",
-          "size": 4454
-        }
-      ]
-    },
-    {
-      "name": "老设置里的 default 自动映射成 Serena",
-      "pass": true,
-      "detail": {
-        "value": "Serena",
-        "opts": [
-          "Serena",
-          "Vivian",
-          "Uncle_Fu"
-        ]
-      }
-    },
-    {
-      "name": "映射后 Serena 仍然在候选里（别被过滤掉）",
-      "pass": true,
-      "detail": [
-        "Serena",
-        "Vivian",
-        "Uncle_Fu"
-      ]
-    },
-    {
-      "name": "刷新后朗读设置还在（引擎 + 开关）",
-      "pass": true,
-      "detail": {
-        "e": "audio8",
-        "on": true,
-        "cfg": "audio8"
-      }
     }
   ],
-  "errors": [],
+  "errors": [
+    "TypeError: Cannot read properties of undefined (reading 'includes')\n    at file:///Users/MacBook/.workbuddy/binaries/node/workspace/e2e-tts.mjs:356:65\n    at Array.some (<anonymous>)\n    at file:///Users/MacBook/.workbuddy/binaries/node/workspace/e2e-tts.mjs:356:47"
+  ],
   "data": {
     "statusWhenSpeaking": ""
   }
